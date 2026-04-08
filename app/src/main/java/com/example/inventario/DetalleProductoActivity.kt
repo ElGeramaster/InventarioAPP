@@ -1,13 +1,16 @@
 package com.example.inventario
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 
 class DetalleProductoActivity : AppCompatActivity() {
 
@@ -17,23 +20,26 @@ class DetalleProductoActivity : AppCompatActivity() {
     private lateinit var tvCantidad: TextView
     private lateinit var tvStockMinimo: TextView
     private lateinit var tvAlertaStock: TextView
+    private lateinit var ivDetalleProducto: ImageView
+    private lateinit var cardImagen: CardView
     private lateinit var db: AppDatabase
 
     private var producto: Producto? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detalle_producto)
 
         db = AppDatabase.getInstance(this)
 
-        tvNombre      = findViewById(R.id.tvDetalleNombre)
-        tvCategoria   = findViewById(R.id.tvDetalleCategoria)
-        tvPrecio      = findViewById(R.id.tvDetallePrecio)
-        tvCantidad    = findViewById(R.id.tvDetalleCantidad)
-        tvStockMinimo = findViewById(R.id.tvDetalleStockMinimo)
-        tvAlertaStock = findViewById(R.id.tvAlertaStock)
+        tvNombre          = findViewById(R.id.tvDetalleNombre)
+        tvCategoria       = findViewById(R.id.tvDetalleCategoria)
+        tvPrecio          = findViewById(R.id.tvDetallePrecio)
+        tvCantidad        = findViewById(R.id.tvDetalleCantidad)
+        tvStockMinimo     = findViewById(R.id.tvDetalleStockMinimo)
+        tvAlertaStock     = findViewById(R.id.tvAlertaStock)
+        ivDetalleProducto = findViewById(R.id.ivDetalleProducto)
+        cardImagen        = findViewById(R.id.cardImagen)
 
         // Obtener el producto de la base de datos
         val productoId = intent.getIntExtra("PRODUCTO_ID", -1)
@@ -76,6 +82,19 @@ class DetalleProductoActivity : AppCompatActivity() {
         tvPrecio.text = "$${"%.2f".format(p.precio)}"
         tvCantidad.text = "${p.cantidad} unidades"
         tvStockMinimo.text = "${p.stockMinimo} unidades"
+
+        // Mostrar imagen si existe
+        if (!p.imagenUri.isNullOrEmpty()) {
+            val bitmap = BitmapFactory.decodeFile(p.imagenUri)
+            if (bitmap != null) {
+                ivDetalleProducto.setImageBitmap(bitmap)
+                cardImagen.visibility = View.VISIBLE
+            } else {
+                cardImagen.visibility = View.GONE
+            }
+        } else {
+            cardImagen.visibility = View.GONE
+        }
 
         // Mostrar alerta si el stock es bajo
         if (p.cantidad <= p.stockMinimo) {
