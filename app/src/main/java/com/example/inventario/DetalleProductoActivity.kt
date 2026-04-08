@@ -22,6 +22,7 @@ class DetalleProductoActivity : AppCompatActivity() {
     private var producto: Producto? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detalle_producto)
 

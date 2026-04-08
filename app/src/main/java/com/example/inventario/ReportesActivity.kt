@@ -13,6 +13,8 @@ class ReportesActivity : AppCompatActivity() {
     private lateinit var stockBajoFragment: StockBajoFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        supportActionBar?.hide()
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reportes)
 

@@ -18,6 +18,7 @@ class AgregarProductoActivity : AppCompatActivity() {
     private var productoExistente: Producto? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_agregar_producto)
 

@@ -16,12 +16,12 @@ abstract class AppDatabase : RoomDatabase() {
         fun getInstance(context: Context): AppDatabase {
             if (instancia == null) {
                 instancia = Room.databaseBuilder(
-                        context.applicationContext,
-                        AppDatabase::class.java,
-                        "inventario_db"
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "inventario_db"
                 )
-                .allowMainThreadQueries()
-                        .build()
+                    .allowMainThreadQueries()
+                    .build()
             }
             return instancia!!
         }
