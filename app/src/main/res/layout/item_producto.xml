@@ -23,6 +23,28 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
+        <!-- Thumbnail del producto -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardThumbnail"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:visibility="gone"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/viewIndicador">
+
+            <ImageView
+                android:id="@+id/ivThumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Imagen del producto"/>
+
+        </androidx.cardview.widget.CardView>
+
         <TextView
             android:id="@+id/tvNombre"
             android:layout_width="0dp"
@@ -33,7 +55,7 @@
             android:textStyle="bold"
             android:textColor="#212121"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/viewIndicador"
+            app:layout_constraintStart_toEndOf="@id/cardThumbnail"
             app:layout_constraintEnd_toStartOf="@id/tvCantidad"/>
 
         <TextView
@@ -46,7 +68,7 @@
             android:textSize="13sp"
             android:textColor="#757575"
             app:layout_constraintTop_toBottomOf="@id/tvNombre"
-            app:layout_constraintStart_toEndOf="@id/viewIndicador"
+            app:layout_constraintStart_toEndOf="@id/cardThumbnail"
             app:layout_constraintEnd_toStartOf="@id/tvCantidad"/>
 
         <TextView
@@ -59,7 +81,7 @@
             android:textSize="13sp"
             android:textColor="#388E3C"
             app:layout_constraintTop_toBottomOf="@id/tvCategoria"
-            app:layout_constraintStart_toEndOf="@id/viewIndicador"
+            app:layout_constraintStart_toEndOf="@id/cardThumbnail"
             app:layout_constraintEnd_toStartOf="@id/tvCantidad"/>
 
         <!-- Cantidad (esquina derecha) -->
