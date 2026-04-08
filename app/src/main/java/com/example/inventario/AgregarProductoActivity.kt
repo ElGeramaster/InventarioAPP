@@ -253,6 +253,9 @@ class AgregarProductoActivity : AppCompatActivity() {
             Toast.makeText(this, "Producto guardado", Toast.LENGTH_SHORT).show()
         }
 
+        // Verificar stock bajo y notificar
+        NotificationHelper.verificarYNotificarStockBajo(this)
+
         finish()
     }
 }
