@@ -17,6 +17,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Nombre del producto"
+            android:textColorHint="#757575"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#6200EE"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -25,6 +28,7 @@
                 android:id="@+id/etNombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#212121"
                 android:inputType="textCapSentences"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -36,6 +40,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Categoría (ej: Lácteos, Bebidas...)"
+            android:textColorHint="#757575"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#6200EE"
             app:layout_constraintTop_toBottomOf="@id/tilNombre"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -44,6 +51,7 @@
                 android:id="@+id/etCategoria"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#212121"
                 android:inputType="textCapSentences"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -55,6 +63,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Precio ($)"
+            android:textColorHint="#757575"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#6200EE"
             app:layout_constraintTop_toBottomOf="@id/tilCategoria"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/tilCantidad"
@@ -64,6 +75,7 @@
                 android:id="@+id/etPrecio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#212121"
                 android:inputType="numberDecimal"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -76,6 +88,9 @@
             android:layout_marginTop="12dp"
             android:layout_marginStart="12dp"
             android:hint="Cantidad"
+            android:textColorHint="#757575"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#6200EE"
             app:layout_constraintTop_toBottomOf="@id/tilCategoria"
             app:layout_constraintStart_toEndOf="@id/tilPrecio"
             app:layout_constraintEnd_toEndOf="parent"
@@ -85,6 +100,7 @@
                 android:id="@+id/etCantidad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#212121"
                 android:inputType="number"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -96,6 +112,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Stock mínimo (alerta)"
+            android:textColorHint="#757575"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#6200EE"
             app:layout_constraintTop_toBottomOf="@id/tilPrecio"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -104,6 +123,7 @@
                 android:id="@+id/etStockMinimo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#212121"
                 android:inputType="number"/>
 
         </com.google.android.material.textfield.TextInputLayout>
