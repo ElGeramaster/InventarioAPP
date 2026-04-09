@@ -30,6 +30,7 @@ object NotificationHelper {
     }
 
     fun verificarYNotificarStockBajo(context: Context) {
+        crearCanal(context)
         val db = AppDatabase.getInstance(context)
         val productosStockBajo = db.productoDao().obtenerStockBajo()
 
