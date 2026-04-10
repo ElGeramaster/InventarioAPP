@@ -6,16 +6,36 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <SearchView
-        android:id="@+id/searchView"
+    <LinearLayout
+        android:id="@+id/layoutBusqueda"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        android:queryHint="Buscar producto o categoría..."
-        android:background="#FFFFFF"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:queryHint="Buscar producto..."
+            android:background="#FFFFFF"/>
+
+        <Spinner
+            android:id="@+id/spinnerCategoria"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:minWidth="120dp"
+            android:background="#FFFFFF"
+            android:padding="4dp"
+            android:popupBackground="#FFFFFF"/>
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -24,7 +44,7 @@
         android:layout_marginTop="8dp"
         android:padding="8dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/searchView"
+        app:layout_constraintTop_toBottomOf="@id/layoutBusqueda"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

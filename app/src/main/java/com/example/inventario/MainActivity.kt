@@ -5,7 +5,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.SearchView
+import android.widget.Spinner
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -17,12 +21,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ProductoAdapter
+    private lateinit var spinnerCategoria: Spinner
     private lateinit var db: AppDatabase
+
+    private var categoriaSeleccionada: String = ""
+    private var busquedaActual: String = ""
 
     private val permisoNotificacionesLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) {
-        // Verificar stock bajo independientemente del resultado
         NotificationHelper.verificarYNotificarStockBajo(this)
     }
 
@@ -33,14 +40,20 @@ class MainActivity : AppCompatActivity() {
 
         db = AppDatabase.getInstance(this)
 
-        // Crear canal de notificaciones
         NotificationHelper.crearCanal(this)
-
-        // Solicitar permiso de notificaciones en Android 13+
         solicitarPermisoNotificaciones()
 
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        spinnerCategoria = findViewById(R.id.spinnerCategoria)
+        spinnerCategoria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                categoriaSeleccionada = if (position == 0) "" else parent?.getItemAtPosition(position) as? String ?: ""
+                filtrarProductos()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
         val fab = findViewById<FloatingActionButton>(R.id.fabAgregar)
         fab.setOnClickListener {
@@ -49,8 +62,14 @@ class MainActivity : AppCompatActivity() {
 
         val searchView = findViewById<SearchView>(R.id.searchView)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?) = true.also { buscar(query ?: "") }
-            override fun onQueryTextChange(newText: String?) = true.also { buscar(newText ?: "") }
+            override fun onQueryTextSubmit(query: String?) = true.also {
+                busquedaActual = query ?: ""
+                filtrarProductos()
+            }
+            override fun onQueryTextChange(newText: String?) = true.also {
+                busquedaActual = newText ?: ""
+                filtrarProductos()
+            }
         })
     }
 
@@ -82,10 +101,37 @@ class MainActivity : AppCompatActivity() {
         } else {
             adapter.actualizarLista(productos)
         }
+        actualizarCategorias()
     }
 
-    private fun buscar(query: String) {
-        val resultados = db.productoDao().buscar(query)
+    private fun actualizarCategorias() {
+        val categorias = mutableListOf("Todas")
+        categorias.addAll(db.productoDao().obtenerCategorias())
+
+        val adapterSpinner = ArrayAdapter(this, android.R.layout.simple_spinner_item, categorias)
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        val seleccionActual = categoriaSeleccionada
+        spinnerCategoria.adapter = adapterSpinner
+
+        val index = categorias.indexOf(seleccionActual)
+        if (index >= 0) {
+            spinnerCategoria.setSelection(index)
+        }
+    }
+
+    private fun filtrarProductos() {
+        if (!::adapter.isInitialized) return
+
+        val resultados = if (categoriaSeleccionada.isEmpty()) {
+            if (busquedaActual.isEmpty()) {
+                db.productoDao().obtenerTodos()
+            } else {
+                db.productoDao().buscar(busquedaActual)
+            }
+        } else {
+            db.productoDao().buscarPorCategoria(categoriaSeleccionada, busquedaActual)
+        }
         adapter.actualizarLista(resultados)
     }
 }

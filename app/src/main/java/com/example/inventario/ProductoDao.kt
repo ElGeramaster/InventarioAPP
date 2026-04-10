@@ -25,4 +25,10 @@ interface ProductoDao {
 
     @Query("SELECT * FROM productos WHERE id = :id")
     fun obtenerPorId(id: Int): Producto
+
+    @Query("SELECT DISTINCT categoria FROM productos ORDER BY categoria ASC")
+    fun obtenerCategorias(): List<String>
+
+    @Query("SELECT * FROM productos WHERE categoria = :categoria AND (nombre LIKE '%' || :busqueda || '%') ORDER BY nombre ASC")
+    fun buscarPorCategoria(categoria: String, busqueda: String): List<Producto>
 }

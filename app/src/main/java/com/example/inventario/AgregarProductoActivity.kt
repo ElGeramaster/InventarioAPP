@@ -96,6 +96,7 @@ class AgregarProductoActivity : AppCompatActivity() {
             productoExistente = db.productoDao().obtenerPorId(productoId)
             productoExistente?.let {
                 llenarCampos(it)
+                imagenUri = it.imagenUri
                 it.imagenUri?.let { uri -> mostrarImagen(uri) }
             }
             title = "Editar producto"
