@@ -16,6 +16,7 @@ class DetalleProductoActivity : AppCompatActivity() {
 
     private lateinit var tvNombre: TextView
     private lateinit var tvCategoria: TextView
+    private lateinit var tvPrecioCompra: TextView
     private lateinit var tvPrecio: TextView
     private lateinit var tvCantidad: TextView
     private lateinit var tvStockMinimo: TextView
@@ -34,6 +35,7 @@ class DetalleProductoActivity : AppCompatActivity() {
 
         tvNombre          = findViewById(R.id.tvDetalleNombre)
         tvCategoria       = findViewById(R.id.tvDetalleCategoria)
+        tvPrecioCompra    = findViewById(R.id.tvDetallePrecioCompra)
         tvPrecio          = findViewById(R.id.tvDetallePrecio)
         tvCantidad        = findViewById(R.id.tvDetalleCantidad)
         tvStockMinimo     = findViewById(R.id.tvDetalleStockMinimo)
@@ -79,6 +81,7 @@ class DetalleProductoActivity : AppCompatActivity() {
         title = p.nombre
         tvNombre.text = p.nombre
         tvCategoria.text = p.categoria
+        tvPrecioCompra.text = "$${"%.2f".format(p.precioCompra)}"
         tvPrecio.text = "$${"%.2f".format(p.precio)}"
         tvCantidad.text = "${p.cantidad} unidades"
         tvStockMinimo.text = "${p.stockMinimo} unidades"

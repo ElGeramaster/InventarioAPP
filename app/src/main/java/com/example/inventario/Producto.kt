@@ -9,6 +9,7 @@ data class Producto(
     val id: Int = 0,
     val nombre: String,
     val categoria: String,
+    val precioCompra: Double = 0.0,
     val precio: Double,
     val cantidad: Int,
     val stockMinimo: Int,
