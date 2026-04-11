@@ -39,7 +39,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Categoría (ej: Lácteos, Bebidas...)"
+            android:hint="Categoría"
             android:textColorHint="#757575"
             app:hintTextColor="#424242"
             app:boxStrokeColor="#6200EE"
@@ -62,17 +62,43 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Precio ($)"
+            android:hint="Precio de Venta"
             android:textColorHint="#757575"
             app:hintTextColor="#424242"
             app:boxStrokeColor="#6200EE"
+            app:layout_constraintStart_toEndOf="@id/tilPrecioCompra"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tilCategoria"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tilCantidad"
-            app:layout_constraintHorizontal_weight="1">
+            app:layout_constraintHorizontal_weight="1"
+            android:layout_marginStart="6dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPrecio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#212121"
+                android:inputType="numberDecimal"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPrecioCompra"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Precio de Compra"
+            android:textColorHint="#757575"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#6200EE"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tilPrecio"
+            app:layout_constraintTop_toBottomOf="@id/tilCategoria"
+
+            app:layout_constraintHorizontal_weight="1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPrecioCompra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#212121"
@@ -86,14 +112,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:layout_marginStart="12dp"
+            android:layout_marginEnd="6dp"
             android:hint="Cantidad"
             android:textColorHint="#757575"
             app:hintTextColor="#424242"
             app:boxStrokeColor="#6200EE"
-            app:layout_constraintTop_toBottomOf="@id/tilCategoria"
-            app:layout_constraintStart_toEndOf="@id/tilPrecio"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilPrecio"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tilStockMinimo"
             app:layout_constraintHorizontal_weight="1">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -111,13 +137,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Stock mínimo (alerta)"
+            android:layout_marginStart="6dp"
+            android:hint="Stock mínimo"
             android:textColorHint="#757575"
             app:hintTextColor="#424242"
             app:boxStrokeColor="#6200EE"
             app:layout_constraintTop_toBottomOf="@id/tilPrecio"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintStart_toEndOf="@id/tilCantidad"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="1">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etStockMinimo"
@@ -127,6 +155,8 @@
                 android:inputType="number"/>
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        
 
         <!-- Sección de imagen del producto -->
         <TextView
