@@ -9,6 +9,8 @@ class ReportesActivity : AppCompatActivity() {
     private lateinit var tvTotalProductos: TextView
     private lateinit var tvValorTotal: TextView
     private lateinit var tvStockBajoCount: TextView
+    private lateinit var tvValorCompra: TextView
+    private lateinit var tvGanancia: TextView
     private lateinit var db: AppDatabase
     private lateinit var stockBajoFragment: StockBajoFragment
 
@@ -25,6 +27,8 @@ class ReportesActivity : AppCompatActivity() {
         tvTotalProductos = findViewById(R.id.tvTotalProductos)
         tvValorTotal     = findViewById(R.id.tvValorTotal)
         tvStockBajoCount = findViewById(R.id.tvStockBajoCount)
+        tvValorCompra    = findViewById(R.id.tvValorCompra)
+        tvGanancia       = findViewById(R.id.tvGanancia)
 
         cargarFragment()
         cargarResumen()
@@ -48,11 +52,15 @@ class ReportesActivity : AppCompatActivity() {
         val stockBajo    = db.productoDao().obtenerStockBajo()
 
         val totalProductos = productos.size
-        val valorTotal     = productos.sumOf { it.precio * it.cantidad }
+        val valorVenta     = productos.sumOf { it.precio * it.cantidad }
+        val valorCompra    = productos.sumOf { it.precioCompra * it.cantidad }
+        val ganancia       = valorVenta - valorCompra
         val countStockBajo = stockBajo.size
 
         tvTotalProductos.text = totalProductos.toString()
-        tvValorTotal.text     = "$${"%.0f".format(valorTotal)}"
+        tvValorTotal.text     = "$${"%.0f".format(valorVenta)}"
         tvStockBajoCount.text = countStockBajo.toString()
+        tvValorCompra.text    = "$${"%.0f".format(valorCompra)}"
+        tvGanancia.text       = "$${"%.0f".format(ganancia)}"
     }
 }

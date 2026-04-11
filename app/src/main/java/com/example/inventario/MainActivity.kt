@@ -60,6 +60,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, AgregarProductoActivity::class.java))
         }
 
+        val fabResumen = findViewById<FloatingActionButton>(R.id.fabResumen)
+        fabResumen.setOnClickListener {
+            startActivity(Intent(this, ReportesActivity::class.java))
+        }
+
         val searchView = findViewById<SearchView>(R.id.searchView)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = true.also {

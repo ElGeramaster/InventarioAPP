@@ -24,6 +24,7 @@ class AgregarProductoActivity : AppCompatActivity() {
 
     private lateinit var etNombre: TextInputEditText
     private lateinit var etCategoria: TextInputEditText
+    private lateinit var etPrecioCompra: TextInputEditText
     private lateinit var etPrecio: TextInputEditText
     private lateinit var etCantidad: TextInputEditText
     private lateinit var etStockMinimo: TextInputEditText
@@ -81,11 +82,12 @@ class AgregarProductoActivity : AppCompatActivity() {
 
         db = AppDatabase.getInstance(this)
 
-        etNombre      = findViewById(R.id.etNombre)
-        etCategoria   = findViewById(R.id.etCategoria)
-        etPrecio      = findViewById(R.id.etPrecio)
-        etCantidad    = findViewById(R.id.etCantidad)
-        etStockMinimo = findViewById(R.id.etStockMinimo)
+        etNombre       = findViewById(R.id.etNombre)
+        etCategoria    = findViewById(R.id.etCategoria)
+        etPrecioCompra = findViewById(R.id.etPrecioCompra)
+        etPrecio       = findViewById(R.id.etPrecio)
+        etCantidad     = findViewById(R.id.etCantidad)
+        etStockMinimo  = findViewById(R.id.etStockMinimo)
         ivProducto    = findViewById(R.id.ivProducto)
         layoutPlaceholder = findViewById(R.id.layoutPlaceholder)
         btnQuitarImagen   = findViewById(R.id.btnQuitarImagen)
@@ -131,6 +133,7 @@ class AgregarProductoActivity : AppCompatActivity() {
     private fun llenarCampos(producto: Producto) {
         etNombre.setText(producto.nombre)
         etCategoria.setText(producto.categoria)
+        etPrecioCompra.setText(producto.precioCompra.toString())
         etPrecio.setText(producto.precio.toString())
         etCantidad.setText(producto.cantidad.toString())
         etStockMinimo.setText(producto.stockMinimo.toString())
@@ -198,11 +201,12 @@ class AgregarProductoActivity : AppCompatActivity() {
     }
 
     private fun guardarProducto() {
-        val nombre     = etNombre.text.toString().trim()
-        val categoria  = etCategoria.text.toString().trim()
-        val precioStr  = etPrecio.text.toString().trim()
-        val cantidadStr = etCantidad.text.toString().trim()
-        val stockMinimoStr = etStockMinimo.text.toString().trim()
+        val nombre          = etNombre.text.toString().trim()
+        val categoria       = etCategoria.text.toString().trim()
+        val precioCompraStr = etPrecioCompra.text.toString().trim()
+        val precioStr       = etPrecio.text.toString().trim()
+        val cantidadStr     = etCantidad.text.toString().trim()
+        val stockMinimoStr  = etStockMinimo.text.toString().trim()
 
         // Validaciones
         if (nombre.isEmpty()) {
@@ -213,8 +217,12 @@ class AgregarProductoActivity : AppCompatActivity() {
             etCategoria.error = "La categoría es obligatoria"
             return
         }
+        if (precioCompraStr.isEmpty()) {
+            etPrecioCompra.error = "El precio de compra es obligatorio"
+            return
+        }
         if (precioStr.isEmpty()) {
-            etPrecio.error = "El precio es obligatorio"
+            etPrecio.error = "El precio de venta es obligatorio"
             return
         }
         if (cantidadStr.isEmpty()) {
@@ -226,14 +234,16 @@ class AgregarProductoActivity : AppCompatActivity() {
             return
         }
 
-        val precio     = precioStr.toDouble()
-        val cantidad   = cantidadStr.toInt()
-        val stockMinimo = stockMinimoStr.toInt()
+        val precioCompra = precioCompraStr.toDouble()
+        val precio       = precioStr.toDouble()
+        val cantidad     = cantidadStr.toInt()
+        val stockMinimo  = stockMinimoStr.toInt()
 
         if (productoExistente != null) {
             val actualizado = productoExistente!!.copy(
                 nombre = nombre,
                 categoria = categoria,
+                precioCompra = precioCompra,
                 precio = precio,
                 cantidad = cantidad,
                 stockMinimo = stockMinimo,
@@ -245,6 +255,7 @@ class AgregarProductoActivity : AppCompatActivity() {
             val nuevo = Producto(
                 nombre = nombre,
                 categoria = categoria,
+                precioCompra = precioCompra,
                 precio = precio,
                 cantidad = cantidad,
                 stockMinimo = stockMinimo,

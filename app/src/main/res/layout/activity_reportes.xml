@@ -34,7 +34,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
 
-            <!-- Fila de 3 métricas -->
+            <!-- Fila de 3 métricas superiores -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/filaMetricas"
                 android:layout_width="0dp"
@@ -75,7 +75,7 @@
 
                 </LinearLayout>
 
-                <!-- Métrica 2: Valor total -->
+                <!-- Métrica 2: Valor total venta -->
                 <LinearLayout
                     android:id="@+id/metrica2"
                     android:layout_width="0dp"
@@ -95,14 +95,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$0"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#1565C0"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Valor total"
+                        android:text="Valor venta"
                         android:textSize="12sp"
                         android:textColor="#1976D2"/>
 
@@ -136,6 +136,82 @@
                         android:text="Stock bajo"
                         android:textSize="12sp"
                         android:textColor="#E53935"/>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Fila de 2 métricas de precios -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/filaPrecios"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/filaMetricas"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <!-- Métrica 4: Valor total compra -->
+                <LinearLayout
+                    android:id="@+id/metrica4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="#FFF3E0"
+                    android:padding="12dp"
+                    android:layout_marginEnd="4dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/metrica5"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/tvValorCompra"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$0"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#E65100"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Inversión compra"
+                        android:textSize="12sp"
+                        android:textColor="#F57C00"/>
+
+                </LinearLayout>
+
+                <!-- Métrica 5: Ganancia potencial -->
+                <LinearLayout
+                    android:id="@+id/metrica5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="#F3E5F5"
+                    android:padding="12dp"
+                    android:layout_marginStart="4dp"
+                    app:layout_constraintStart_toEndOf="@id/metrica4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/tvGanancia"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$0"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#6A1B9A"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ganancia potencial"
+                        android:textSize="12sp"
+                        android:textColor="#7B1FA2"/>
 
                 </LinearLayout>
 
