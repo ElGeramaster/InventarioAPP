@@ -66,8 +66,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, ReportesActivity::class.java))
         }
 
-        val fabTienda = findViewById<FloatingActionButton>(R.id.fabTienda)
-        fabTienda.setOnClickListener {
+        findViewById<android.widget.Button>(R.id.btnIrTienda).setOnClickListener {
             startActivity(Intent(this, TiendaActivity::class.java))
         }
 
