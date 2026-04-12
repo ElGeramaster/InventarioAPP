@@ -1,228 +1,237 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:fillViewport="true">
 
-    <!-- Imagen del producto -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardImagen"
-        android:layout_width="0dp"
-        android:layout_height="220dp"
-        android:layout_margin="16dp"
-        android:visibility="gone"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageView
-            android:id="@+id/ivDetalleProducto"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:contentDescription="Imagen del producto"/>
-
-    </androidx.cardview.widget.CardView>
-
-    <!-- Tarjeta principal con los datos -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardDetalle"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
-        app:layout_constraintTop_toBottomOf="@id/cardImagen"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:paddingBottom="16dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <!-- Imagen del producto -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardImagen"
+            android:layout_width="0dp"
+            android:layout_height="220dp"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/ivDetalleProducto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Imagen del producto"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Tarjeta principal con los datos -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardDetalle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:layout_margin="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:layout_constraintTop_toBottomOf="@id/cardImagen"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <TextView
-                android:id="@+id/tvDetalleNombre"
-                android:layout_width="0dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="#212121"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:padding="20dp">
 
-            <TextView
-                android:id="@+id/tvDetalleCategoria"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="Categoría"
-                android:textSize="14sp"
-                android:textColor="#FFFFFF"
-                android:background="#757575"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                app:layout_constraintTop_toBottomOf="@id/tvDetalleNombre"
-                app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/tvDetalleNombre"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-            <!-- Separador -->
-            <View
-                android:id="@+id/sep1"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_marginTop="16dp"
-                android:background="#E0E0E0"
-                app:layout_constraintTop_toBottomOf="@id/tvDetalleCategoria"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                <TextView
+                    android:id="@+id/tvDetalleCategoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Categoría"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:background="#757575"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    app:layout_constraintTop_toBottomOf="@id/tvDetalleNombre"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
-                android:id="@+id/labelPrecioCompra"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Precio de compra"
-                android:textSize="13sp"
-                android:textColor="#9E9E9E"
-                app:layout_constraintTop_toBottomOf="@id/sep1"
-                app:layout_constraintStart_toStartOf="parent"/>
+                <!-- Separador -->
+                <View
+                    android:id="@+id/sep1"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#E0E0E0"
+                    app:layout_constraintTop_toBottomOf="@id/tvDetalleCategoria"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-            <TextView
-                android:id="@+id/tvDetallePrecioCompra"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="$0.00"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#E65100"
-                app:layout_constraintTop_toBottomOf="@id/labelPrecioCompra"
-                app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/labelPrecioCompra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Precio de compra"
+                    android:textSize="13sp"
+                    android:textColor="#9E9E9E"
+                    app:layout_constraintTop_toBottomOf="@id/sep1"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
-                android:id="@+id/labelPrecio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Precio de venta"
-                android:textSize="13sp"
-                android:textColor="#9E9E9E"
-                app:layout_constraintTop_toBottomOf="@id/tvDetallePrecioCompra"
-                app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/tvDetallePrecioCompra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="$0.00"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#E65100"
+                    app:layout_constraintTop_toBottomOf="@id/labelPrecioCompra"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
-                android:id="@+id/tvDetallePrecio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="$0.00"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#388E3C"
-                app:layout_constraintTop_toBottomOf="@id/labelPrecio"
-                app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/labelPrecio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Precio de venta"
+                    android:textSize="13sp"
+                    android:textColor="#9E9E9E"
+                    app:layout_constraintTop_toBottomOf="@id/tvDetallePrecioCompra"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
-                android:id="@+id/labelCantidad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Cantidad en stock"
-                android:textSize="13sp"
-                android:textColor="#9E9E9E"
-                app:layout_constraintTop_toBottomOf="@id/tvDetallePrecio"
-                app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/tvDetallePrecio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="$0.00"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#388E3C"
+                    app:layout_constraintTop_toBottomOf="@id/labelPrecio"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
-                android:id="@+id/tvDetalleCantidad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="0 unidades"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#212121"
-                app:layout_constraintTop_toBottomOf="@id/labelCantidad"
-                app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/labelCantidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Cantidad en stock"
+                    android:textSize="13sp"
+                    android:textColor="#9E9E9E"
+                    app:layout_constraintTop_toBottomOf="@id/tvDetallePrecio"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
-                android:id="@+id/labelStockMinimo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Stock mínimo"
-                android:textSize="13sp"
-                android:textColor="#9E9E9E"
-                app:layout_constraintTop_toBottomOf="@id/tvDetalleCantidad"
-                app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/tvDetalleCantidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="0 unidades"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"
+                    app:layout_constraintTop_toBottomOf="@id/labelCantidad"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
-                android:id="@+id/tvDetalleStockMinimo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="0 unidades"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#F57C00"
-                app:layout_constraintTop_toBottomOf="@id/labelStockMinimo"
-                app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/labelStockMinimo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Stock mínimo"
+                    android:textSize="13sp"
+                    android:textColor="#9E9E9E"
+                    app:layout_constraintTop_toBottomOf="@id/tvDetalleCantidad"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-            <!-- Alerta stock bajo -->
-            <TextView
-                android:id="@+id/tvAlertaStock"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="⚠️ Stock bajo — necesita resurtido"
-                android:textSize="13sp"
-                android:textColor="#C62828"
-                android:background="#FFEBEE"
-                android:padding="10dp"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/tvDetalleStockMinimo"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                <TextView
+                    android:id="@+id/tvDetalleStockMinimo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="0 unidades"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#F57C00"
+                    app:layout_constraintTop_toBottomOf="@id/labelStockMinimo"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- Alerta stock bajo -->
+                <TextView
+                    android:id="@+id/tvAlertaStock"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="⚠️ Stock bajo — necesita resurtido"
+                    android:textSize="13sp"
+                    android:textColor="#C62828"
+                    android:background="#FFEBEE"
+                    android:padding="10dp"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/tvDetalleStockMinimo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-    </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Botones de acción -->
-    <Button
-        android:id="@+id/btnEditar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Editar producto"
-        android:textAllCaps="false"
-        android:backgroundTint="#1565C0"
-        app:layout_constraintTop_toBottomOf="@id/cardDetalle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/btnEliminar"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        android:text="Eliminar producto"
-        android:textAllCaps="false"
-        android:textColor="#C62828"
-        app:strokeColor="#C62828"
-        app:layout_constraintTop_toBottomOf="@id/btnEditar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <!-- Botones de acción -->
+        <Button
+            android:id="@+id/btnEditar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Editar producto"
+            android:textAllCaps="false"
+            android:backgroundTint="#1565C0"
+            app:layout_constraintTop_toBottomOf="@id/cardDetalle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/btnEliminar"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Eliminar producto"
+            android:textAllCaps="false"
+            android:textColor="#C62828"
+            app:strokeColor="#C62828"
+            app:layout_constraintTop_toBottomOf="@id/btnEditar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
