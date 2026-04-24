@@ -13,7 +13,8 @@ import com.example.inventario.R
 
 class ProductoTiendaAdapter(
     private var productos: List<Producto>,
-    private val onAgregar: (Producto) -> Unit
+    private val onAgregar: (Producto) -> Unit,
+    private val onVerDetalle: (Producto) -> Unit = {}
 ) : RecyclerView.Adapter<ProductoTiendaAdapter.VH>() {
 
     inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -65,6 +66,10 @@ class ProductoTiendaAdapter(
 
         holder.btnAgregar.setOnClickListener {
             onAgregar(producto)
+        }
+
+        holder.itemView.setOnClickListener {
+            onVerDetalle(producto)
         }
     }
 
