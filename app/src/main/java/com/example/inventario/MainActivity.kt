@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.inventario.TiendaGUI.TiendaActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -63,6 +64,10 @@ class MainActivity : AppCompatActivity() {
         val fabResumen = findViewById<FloatingActionButton>(R.id.fabResumen)
         fabResumen.setOnClickListener {
             startActivity(Intent(this, ReportesActivity::class.java))
+        }
+
+        findViewById<android.widget.Button>(R.id.btnIrTienda).setOnClickListener {
+            startActivity(Intent(this, TiendaActivity::class.java))
         }
 
         val searchView = findViewById<SearchView>(R.id.searchView)
