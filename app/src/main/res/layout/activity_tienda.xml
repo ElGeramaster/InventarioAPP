@@ -29,6 +29,19 @@
             android:layout_weight="1"
             android:clipToPadding="false"/>
 
+        <Button
+            android:id="@+id/btnIrInventario"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Inventario"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#1565C0"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_marginEnd="4dp"/>
+
         <ImageButton
             android:id="@+id/btnToggleBuscar"
             android:layout_width="48dp"
