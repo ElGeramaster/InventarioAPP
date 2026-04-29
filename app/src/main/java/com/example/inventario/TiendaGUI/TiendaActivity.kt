@@ -79,7 +79,7 @@ class TiendaActivity : AppCompatActivity() {
             realizarVenta()
         }
 
-        findViewById<Button>(R.id.btnIrInventario).setOnClickListener {
+        findViewById<ImageButton>(R.id.btnIrInventario).setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
         }
     }
