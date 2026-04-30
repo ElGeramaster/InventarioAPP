@@ -14,7 +14,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="#43A047"
-        android:paddingEnd="16dp"
+        android:paddingEnd="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -35,6 +35,17 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"/>
+
+        <Button
+            android:id="@+id/btnEliminarHistorial"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Limpiar todo"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#C62828"
+            android:layout_marginEnd="4dp"/>
 
     </LinearLayout>
 
@@ -228,6 +239,51 @@
 
             </androidx.cardview.widget.CardView>
 
+            <!-- Chart card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvTituloGrafica"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Ingresos por día"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="#757575"
+                        android:layout_marginBottom="8dp"/>
+
+                    <com.example.inventario.HistorialVentas.BarChartView
+                        android:id="@+id/barChartVentas"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"/>
+
+                    <TextView
+                        android:id="@+id/tvSinDatosGrafica"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sin datos para este período"
+                        android:textSize="12sp"
+                        android:textColor="#9E9E9E"
+                        android:gravity="center"
+                        android:padding="24dp"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
             <!-- Más vendidos -->
             <TextView
                 android:layout_width="match_parent"
@@ -286,7 +342,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvVentas"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
 
         </LinearLayout>
 
