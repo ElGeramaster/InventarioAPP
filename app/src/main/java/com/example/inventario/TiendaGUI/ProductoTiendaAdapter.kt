@@ -1,5 +1,6 @@
 package com.example.inventario.TiendaGUI
 
+import android.content.res.ColorStateList
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.inventario.Producto
 import com.example.inventario.R
@@ -55,13 +57,24 @@ class ProductoTiendaAdapter(
             holder.tvSinFoto.visibility = View.VISIBLE
         }
 
-        // Deshabilitar botón si no hay stock
         if (producto.cantidad <= 0) {
             holder.btnAgregar.isEnabled = false
             holder.btnAgregar.text = "Sin stock"
+            holder.btnAgregar.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.darker_gray)
+            )
+            holder.tvStock.setTextColor(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.holo_red_light)
+            )
         } else {
             holder.btnAgregar.isEnabled = true
             holder.btnAgregar.text = "Agregar"
+            holder.btnAgregar.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(holder.itemView.context, R.color.verde_primario)
+            )
+            holder.tvStock.setTextColor(
+                ContextCompat.getColor(holder.itemView.context, R.color.gris_texto)
+            )
         }
 
         holder.btnAgregar.setOnClickListener {

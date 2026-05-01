@@ -19,9 +19,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.inventario.AppDatabase
+import com.example.inventario.HistorialVentas.HistorialVentasActivity
 import com.example.inventario.MainActivity
 import com.example.inventario.Producto
 import com.example.inventario.R
+import com.example.inventario.Venta
+import com.example.inventario.VentaDetalle
 
 class TiendaActivity : AppCompatActivity() {
 
@@ -81,6 +84,10 @@ class TiendaActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.btnIrInventario).setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
+        }
+
+        findViewById<ImageButton>(R.id.btnIrHistorial).setOnClickListener {
+            startActivity(Intent(this, HistorialVentasActivity::class.java))
         }
     }
 
@@ -333,7 +340,27 @@ class TiendaActivity : AppCompatActivity() {
                         "$${"%.2f".format(total)} MXN.\n\n¿Continuar?"
             )
             .setPositiveButton("Realizar") { _, _ ->
-                // Descontar del inventario
+                val ganancia = carrito.values.sumOf {
+                    (it.producto.precio - it.producto.precioCompra) * it.cantidad
+                }
+                val venta = Venta(
+                    total = total,
+                    ganancia = ganancia,
+                    totalArticulos = cantidadItems
+                )
+                val ventaId = db.ventaDao().insertarVenta(venta).toInt()
+                val detalles = carrito.values.map { item ->
+                    VentaDetalle(
+                        ventaId = ventaId,
+                        productoId = item.producto.id,
+                        productoNombre = item.producto.nombre,
+                        cantidad = item.cantidad,
+                        precioUnitario = item.producto.precio,
+                        precioCompra = item.producto.precioCompra,
+                        subtotal = item.subtotal
+                    )
+                }
+                db.ventaDao().insertarDetalles(detalles)
                 for (item in carrito.values) {
                     val productoActualizado = item.producto.copy(
                         cantidad = item.producto.cantidad - item.cantidad
