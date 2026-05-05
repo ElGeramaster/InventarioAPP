@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Outer border (dark navy) -->
+    <path
+        android:fillColor="#1B3050"
+        android:pathData="M50,50 m-48,0 a48,48 0 1,0 96,0 a48,48 0 1,0 -96,0"/>
+
+    <!-- Inner white fill -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,50 m-39,0 a39,39 0 1,0 78,0 a39,39 0 1,0 -78,0"/>
+
+    <!-- Left eye (black) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M32,33 m-12,0 a12,12 0 1,0 24,0 a12,12 0 1,0 -24,0"/>
+
+    <!-- Left eye highlight (white) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,28 m-5,0 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0"/>
+
+    <!-- Right eye (black) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M68,33 m-12,0 a12,12 0 1,0 24,0 a12,12 0 1,0 -24,0"/>
+
+    <!-- Right eye highlight (white) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M72,28 m-5,0 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0"/>
+
+    <!-- Mouth (yellow bar) -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M25,62 L75,62 Q80,62 80,67 L80,69 Q80,74 75,74 L25,74 Q20,74 20,69 L20,67 Q20,62 25,62 Z"/>
+
+</vector>
