@@ -29,20 +29,12 @@
             android:textColor="#FFFFFF"/>
 
         <ImageButton
-            android:id="@+id/btnIrHistorial"
+            android:id="@+id/btnMenu"
             android:layout_width="52dp"
             android:layout_height="52dp"
-            android:src="@drawable/ic_history"
+            android:src="@drawable/ic_menu_dots"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Historial de ventas"/>
-
-        <ImageButton
-            android:id="@+id/btnIrInventario"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:src="@drawable/ic_inventory"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Ir a inventario"/>
+            android:contentDescription="Menú de opciones"/>
 
     </LinearLayout>
 

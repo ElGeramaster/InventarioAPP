@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -82,12 +83,18 @@ class TiendaActivity : AppCompatActivity() {
             realizarVenta()
         }
 
-        findViewById<ImageButton>(R.id.btnIrInventario).setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
-
-        findViewById<ImageButton>(R.id.btnIrHistorial).setOnClickListener {
-            startActivity(Intent(this, HistorialVentasActivity::class.java))
+        findViewById<ImageButton>(R.id.btnMenu).setOnClickListener { view ->
+            val popup = PopupMenu(this, view)
+            popup.menu.add(0, 1, 0, "Historial")
+            popup.menu.add(0, 2, 1, "Inventario")
+            popup.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    1 -> { startActivity(Intent(this, HistorialVentasActivity::class.java)); true }
+                    2 -> { startActivity(Intent(this, MainActivity::class.java)); true }
+                    else -> false
+                }
+            }
+            popup.show()
         }
     }
 
