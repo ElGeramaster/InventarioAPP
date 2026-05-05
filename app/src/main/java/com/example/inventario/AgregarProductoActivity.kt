@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -31,13 +32,14 @@ class AgregarProductoActivity : AppCompatActivity() {
     private lateinit var ivProducto: ImageView
     private lateinit var layoutPlaceholder: View
     private lateinit var btnQuitarImagen: Button
+    private lateinit var ivQrCode: ImageView
+    private lateinit var layoutQrPlaceholder: LinearLayout
     private lateinit var db: AppDatabase
 
     private var productoExistente: Producto? = null
     private var imagenUri: String? = null
     private var tempCameraUri: Uri? = null
 
-    // Lanzador para tomar foto con la cámara
     private val tomarFotoLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { exito ->
@@ -52,7 +54,6 @@ class AgregarProductoActivity : AppCompatActivity() {
         }
     }
 
-    // Lanzador para seleccionar imagen de la galería
     private val seleccionarImagenLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
@@ -65,7 +66,6 @@ class AgregarProductoActivity : AppCompatActivity() {
         }
     }
 
-    // Lanzador para solicitar permiso de cámara
     private val permisoCamaraLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { concedido ->
@@ -88,11 +88,12 @@ class AgregarProductoActivity : AppCompatActivity() {
         etPrecio       = findViewById(R.id.etPrecio)
         etCantidad     = findViewById(R.id.etCantidad)
         etStockMinimo  = findViewById(R.id.etStockMinimo)
-        ivProducto    = findViewById(R.id.ivProducto)
-        layoutPlaceholder = findViewById(R.id.layoutPlaceholder)
-        btnQuitarImagen   = findViewById(R.id.btnQuitarImagen)
+        ivProducto     = findViewById(R.id.ivProducto)
+        layoutPlaceholder   = findViewById(R.id.layoutPlaceholder)
+        btnQuitarImagen     = findViewById(R.id.btnQuitarImagen)
+        ivQrCode            = findViewById(R.id.ivQrCode)
+        layoutQrPlaceholder = findViewById(R.id.layoutQrPlaceholder)
 
-        // Si viene un ID, es modo edición
         val productoId = intent.getIntExtra("PRODUCTO_ID", -1)
         if (productoId != -1) {
             productoExistente = db.productoDao().obtenerPorId(productoId)
@@ -100,6 +101,7 @@ class AgregarProductoActivity : AppCompatActivity() {
                 llenarCampos(it)
                 imagenUri = it.imagenUri
                 it.imagenUri?.let { uri -> mostrarImagen(uri) }
+                mostrarQr(it)
             }
             title = "Editar producto"
         } else {
@@ -121,6 +123,10 @@ class AgregarProductoActivity : AppCompatActivity() {
             btnQuitarImagen.visibility = View.GONE
         }
 
+        findViewById<Button>(R.id.btnGenerarQr).setOnClickListener {
+            generarQrDesdeFormulario()
+        }
+
         findViewById<Button>(R.id.btnGuardar).setOnClickListener {
             guardarProducto()
         }
@@ -137,6 +143,52 @@ class AgregarProductoActivity : AppCompatActivity() {
         etPrecio.setText(producto.precio.toString())
         etCantidad.setText(producto.cantidad.toString())
         etStockMinimo.setText(producto.stockMinimo.toString())
+    }
+
+    private fun mostrarQr(producto: Producto) {
+        try {
+            val bitmap = QrCodeHelper.generarQr(producto)
+            ivQrCode.setImageBitmap(bitmap)
+            ivQrCode.visibility = View.VISIBLE
+            layoutQrPlaceholder.visibility = View.GONE
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al generar código QR", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun generarQrDesdeFormulario() {
+        val nombre    = etNombre.text.toString().trim()
+        val categoria = etCategoria.text.toString().trim()
+        val precioStr = etPrecio.text.toString().trim()
+
+        if (nombre.isEmpty() || categoria.isEmpty() || precioStr.isEmpty()) {
+            Toast.makeText(this, "Completa nombre, categoría y precio para generar el QR", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val precio = precioStr.toDoubleOrNull()
+        if (precio == null) {
+            Toast.makeText(this, "Precio inválido", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            val bitmap = if (productoExistente != null) {
+                val actualizado = productoExistente!!.copy(
+                    nombre = nombre,
+                    categoria = categoria,
+                    precio = precio
+                )
+                QrCodeHelper.generarQr(actualizado)
+            } else {
+                QrCodeHelper.generarQrPreview(nombre, categoria, precio)
+            }
+            ivQrCode.setImageBitmap(bitmap)
+            ivQrCode.visibility = View.VISIBLE
+            layoutQrPlaceholder.visibility = View.GONE
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al generar código QR", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun verificarPermisoYAbrirCamara() {
@@ -208,7 +260,6 @@ class AgregarProductoActivity : AppCompatActivity() {
         val cantidadStr     = etCantidad.text.toString().trim()
         val stockMinimoStr  = etStockMinimo.text.toString().trim()
 
-        // Validaciones
         if (nombre.isEmpty()) {
             etNombre.error = "El nombre es obligatorio"
             return
@@ -265,7 +316,6 @@ class AgregarProductoActivity : AppCompatActivity() {
             Toast.makeText(this, "Producto guardado", Toast.LENGTH_SHORT).show()
         }
 
-        // Verificar stock bajo y notificar
         NotificationHelper.verificarYNotificarStockBajo(this)
 
         finish()

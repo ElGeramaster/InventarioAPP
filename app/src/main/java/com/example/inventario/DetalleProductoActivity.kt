@@ -22,6 +22,7 @@ class DetalleProductoActivity : AppCompatActivity() {
     private lateinit var tvStockMinimo: TextView
     private lateinit var tvAlertaStock: TextView
     private lateinit var ivDetalleProducto: ImageView
+    private lateinit var ivQrCode: ImageView
     private lateinit var cardImagen: CardView
     private lateinit var db: AppDatabase
 
@@ -41,9 +42,9 @@ class DetalleProductoActivity : AppCompatActivity() {
         tvStockMinimo     = findViewById(R.id.tvDetalleStockMinimo)
         tvAlertaStock     = findViewById(R.id.tvAlertaStock)
         ivDetalleProducto = findViewById(R.id.ivDetalleProducto)
+        ivQrCode          = findViewById(R.id.ivQrCode)
         cardImagen        = findViewById(R.id.cardImagen)
 
-        // Obtener el producto de la base de datos
         val productoId = intent.getIntExtra("PRODUCTO_ID", -1)
         if (productoId == -1) {
             Toast.makeText(this, "Error al cargar el producto", Toast.LENGTH_SHORT).show()
@@ -70,7 +71,6 @@ class DetalleProductoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Recargar datos al volver de edición
         producto?.let {
             producto = db.productoDao().obtenerPorId(it.id)
             producto?.let { p -> mostrarDatos(p) }
@@ -86,7 +86,6 @@ class DetalleProductoActivity : AppCompatActivity() {
         tvCantidad.text = "${p.cantidad} unidades"
         tvStockMinimo.text = "${p.stockMinimo} unidades"
 
-        // Mostrar imagen si existe
         if (!p.imagenUri.isNullOrEmpty()) {
             val bitmap = BitmapFactory.decodeFile(p.imagenUri)
             if (bitmap != null) {
@@ -99,11 +98,21 @@ class DetalleProductoActivity : AppCompatActivity() {
             cardImagen.visibility = View.GONE
         }
 
-        // Mostrar alerta si el stock es bajo
         if (p.cantidad <= p.stockMinimo) {
             tvAlertaStock.visibility = View.VISIBLE
         } else {
             tvAlertaStock.visibility = View.GONE
+        }
+
+        mostrarQr(p)
+    }
+
+    private fun mostrarQr(producto: Producto) {
+        try {
+            val bitmap = QrCodeHelper.generarQr(producto)
+            ivQrCode.setImageBitmap(bitmap)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al generar código QR", Toast.LENGTH_SHORT).show()
         }
     }
 
