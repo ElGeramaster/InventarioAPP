@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
@@ -14,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -23,7 +26,8 @@ import java.util.Locale
 class AgregarProductoActivity : AppCompatActivity() {
 
     private lateinit var etNombre: TextInputEditText
-    private lateinit var etCategoria: TextInputEditText
+    private lateinit var acvCategoria: AutoCompleteTextView
+    private lateinit var tilCategoria: TextInputLayout
     private lateinit var etPrecioCompra: TextInputEditText
     private lateinit var etPrecio: TextInputEditText
     private lateinit var etCantidad: TextInputEditText
@@ -83,7 +87,8 @@ class AgregarProductoActivity : AppCompatActivity() {
         db = AppDatabase.getInstance(this)
 
         etNombre       = findViewById(R.id.etNombre)
-        etCategoria    = findViewById(R.id.etCategoria)
+        acvCategoria   = findViewById(R.id.acvCategoria)
+        tilCategoria   = findViewById(R.id.tilCategoria)
         etPrecioCompra = findViewById(R.id.etPrecioCompra)
         etPrecio       = findViewById(R.id.etPrecio)
         etCantidad     = findViewById(R.id.etCantidad)
@@ -91,6 +96,8 @@ class AgregarProductoActivity : AppCompatActivity() {
         ivProducto    = findViewById(R.id.ivProducto)
         layoutPlaceholder = findViewById(R.id.layoutPlaceholder)
         btnQuitarImagen   = findViewById(R.id.btnQuitarImagen)
+
+        cargarCategorias()
 
         // Si viene un ID, es modo edición
         val productoId = intent.getIntExtra("PRODUCTO_ID", -1)
@@ -130,9 +137,16 @@ class AgregarProductoActivity : AppCompatActivity() {
         }
     }
 
+    private fun cargarCategorias() {
+        val categorias = db.productoDao().obtenerCategorias()
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categorias)
+        acvCategoria.setAdapter(adapter)
+        acvCategoria.setOnClickListener { acvCategoria.showDropDown() }
+    }
+
     private fun llenarCampos(producto: Producto) {
         etNombre.setText(producto.nombre)
-        etCategoria.setText(producto.categoria)
+        acvCategoria.setText(producto.categoria, false)
         etPrecioCompra.setText(producto.precioCompra.toString())
         etPrecio.setText(producto.precio.toString())
         etCantidad.setText(producto.cantidad.toString())
@@ -202,7 +216,7 @@ class AgregarProductoActivity : AppCompatActivity() {
 
     private fun guardarProducto() {
         val nombre          = etNombre.text.toString().trim()
-        val categoria       = etCategoria.text.toString().trim()
+        val categoria       = acvCategoria.text.toString().trim()
         val precioCompraStr = etPrecioCompra.text.toString().trim()
         val precioStr       = etPrecio.text.toString().trim()
         val cantidadStr     = etCantidad.text.toString().trim()
@@ -214,9 +228,10 @@ class AgregarProductoActivity : AppCompatActivity() {
             return
         }
         if (categoria.isEmpty()) {
-            etCategoria.error = "La categoría es obligatoria"
+            tilCategoria.error = "La categoría es obligatoria"
             return
         }
+        tilCategoria.error = null
         if (precioCompraStr.isEmpty()) {
             etPrecioCompra.error = "El precio de compra es obligatorio"
             return

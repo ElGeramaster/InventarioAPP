@@ -19,6 +19,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_carita"
+            android:contentDescription="Tienda"/>
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -29,20 +36,12 @@
             android:textColor="#FFFFFF"/>
 
         <ImageButton
-            android:id="@+id/btnIrHistorial"
+            android:id="@+id/btnMenu"
             android:layout_width="52dp"
             android:layout_height="52dp"
-            android:src="@drawable/ic_history"
+            android:src="@drawable/ic_menu_dots"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Historial de ventas"/>
-
-        <ImageButton
-            android:id="@+id/btnIrInventario"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:src="@drawable/ic_inventory"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Ir a inventario"/>
+            android:contentDescription="Menú de opciones"/>
 
     </LinearLayout>
 
