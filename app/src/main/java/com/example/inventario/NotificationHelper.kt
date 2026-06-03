@@ -16,6 +16,8 @@ object NotificationHelper {
 
     private const val CHANNEL_ID = "stock_bajo_channel"
     private const val NOTIFICATION_ID = 1001
+    private const val PREFS_NAME = "notification_prefs"
+    private const val KEY_NOTIFIED_IDS = "notified_stock_bajo_ids"
 
     fun crearCanal(context: Context) {
         val channel = NotificationChannel(
@@ -34,13 +36,20 @@ object NotificationHelper {
         val db = AppDatabase.getInstance(context)
         val productosStockBajo = db.productoDao().obtenerStockBajo()
 
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val idsNotificados = prefs.getStringSet(KEY_NOTIFIED_IDS, emptySet()) ?: emptySet()
+
+        val idsActuales = productosStockBajo.map { it.id.toString() }.toSet()
+
         if (productosStockBajo.isEmpty()) {
-            // Si no hay stock bajo, cancelar notificación existente
             NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
+            prefs.edit().putStringSet(KEY_NOTIFIED_IDS, emptySet()).apply()
             return
         }
 
-        // Verificar permiso de notificaciones (Android 13+)
+        val nuevosIds = idsActuales - idsNotificados
+        if (nuevosIds.isEmpty()) return
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED
@@ -56,7 +65,6 @@ object NotificationHelper {
             "$cantidad productos con stock bajo"
         }
 
-        // Crear lista de nombres de productos para el detalle
         val detalles = productosStockBajo.take(5).joinToString("\n") { producto ->
             "• ${producto.nombre}: ${producto.cantidad}/${producto.stockMinimo} unidades"
         }
@@ -66,7 +74,6 @@ object NotificationHelper {
             detalles
         }
 
-        // Intent para abrir ReportesActivity al tocar la notificación
         val intent = Intent(context, ReportesActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
@@ -85,5 +92,7 @@ object NotificationHelper {
             .build()
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
+
+        prefs.edit().putStringSet(KEY_NOTIFIED_IDS, idsActuales).apply()
     }
 }

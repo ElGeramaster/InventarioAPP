@@ -182,6 +182,31 @@
                     app:layout_constraintTop_toBottomOf="@id/labelStockMinimo"
                     app:layout_constraintStart_toStartOf="parent"/>
 
+                <TextView
+                    android:id="@+id/labelCodigoBarras"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Código de barras"
+                    android:textSize="13sp"
+                    android:textColor="#9E9E9E"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/tvDetalleStockMinimo"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+                <TextView
+                    android:id="@+id/tvDetalleCodigoBarras"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text=""
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/labelCodigoBarras"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
                 <!-- Alerta stock bajo -->
                 <TextView
                     android:id="@+id/tvAlertaStock"
@@ -194,7 +219,7 @@
                     android:background="#FFEBEE"
                     android:padding="10dp"
                     android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/tvDetalleStockMinimo"
+                    app:layout_constraintTop_toBottomOf="@id/tvDetalleCodigoBarras"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
 

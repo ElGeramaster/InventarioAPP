@@ -31,4 +31,7 @@ interface ProductoDao {
 
     @Query("SELECT * FROM productos WHERE categoria = :categoria AND (nombre LIKE '%' || :busqueda || '%') ORDER BY nombre ASC")
     fun buscarPorCategoria(categoria: String, busqueda: String): List<Producto>
+
+    @Query("SELECT * FROM productos WHERE codigoBarras = :codigo LIMIT 1")
+    fun buscarPorCodigoBarras(codigo: String): Producto?
 }

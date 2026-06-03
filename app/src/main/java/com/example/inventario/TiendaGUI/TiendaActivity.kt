@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.inventario.AppDatabase
 import com.example.inventario.HistorialVentas.HistorialVentasActivity
 import com.example.inventario.MainActivity
+import com.example.inventario.NotificationHelper
 import com.example.inventario.Producto
 import com.example.inventario.R
 import com.example.inventario.Venta
@@ -375,6 +376,7 @@ class TiendaActivity : AppCompatActivity() {
                     db.productoDao().actualizar(productoActualizado)
                 }
                 Toast.makeText(this, "Venta realizada con éxito", Toast.LENGTH_SHORT).show()
+                NotificationHelper.verificarYNotificarStockBajo(this)
                 carrito.clear()
                 actualizarCarritoUI()
                 filtrarProductos()

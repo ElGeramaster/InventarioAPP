@@ -21,6 +21,8 @@ class DetalleProductoActivity : AppCompatActivity() {
     private lateinit var tvCantidad: TextView
     private lateinit var tvStockMinimo: TextView
     private lateinit var tvAlertaStock: TextView
+    private lateinit var tvCodigoBarras: TextView
+    private lateinit var labelCodigoBarras: TextView
     private lateinit var ivDetalleProducto: ImageView
     private lateinit var cardImagen: CardView
     private lateinit var db: AppDatabase
@@ -40,6 +42,8 @@ class DetalleProductoActivity : AppCompatActivity() {
         tvCantidad        = findViewById(R.id.tvDetalleCantidad)
         tvStockMinimo     = findViewById(R.id.tvDetalleStockMinimo)
         tvAlertaStock     = findViewById(R.id.tvAlertaStock)
+        tvCodigoBarras    = findViewById(R.id.tvDetalleCodigoBarras)
+        labelCodigoBarras = findViewById(R.id.labelCodigoBarras)
         ivDetalleProducto = findViewById(R.id.ivDetalleProducto)
         cardImagen        = findViewById(R.id.cardImagen)
 
@@ -97,6 +101,15 @@ class DetalleProductoActivity : AppCompatActivity() {
             }
         } else {
             cardImagen.visibility = View.GONE
+        }
+
+        if (!p.codigoBarras.isNullOrEmpty()) {
+            tvCodigoBarras.text = p.codigoBarras
+            tvCodigoBarras.visibility = View.VISIBLE
+            labelCodigoBarras.visibility = View.VISIBLE
+        } else {
+            tvCodigoBarras.visibility = View.GONE
+            labelCodigoBarras.visibility = View.GONE
         }
 
         // Mostrar alerta si el stock es bajo
