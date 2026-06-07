@@ -17,6 +17,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -32,6 +34,7 @@ class AgregarProductoActivity : AppCompatActivity() {
     private lateinit var etPrecio: TextInputEditText
     private lateinit var etCantidad: TextInputEditText
     private lateinit var etStockMinimo: TextInputEditText
+    private lateinit var etCodigoBarras: TextInputEditText
     private lateinit var ivProducto: ImageView
     private lateinit var layoutPlaceholder: View
     private lateinit var btnQuitarImagen: Button
@@ -69,6 +72,12 @@ class AgregarProductoActivity : AppCompatActivity() {
         }
     }
 
+    private val escanearCodigoLauncher = registerForActivityResult(ScanContract()) { result ->
+        if (result.contents != null) {
+            etCodigoBarras.setText(result.contents)
+        }
+    }
+
     // Lanzador para solicitar permiso de cámara
     private val permisoCamaraLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -93,6 +102,7 @@ class AgregarProductoActivity : AppCompatActivity() {
         etPrecio       = findViewById(R.id.etPrecio)
         etCantidad     = findViewById(R.id.etCantidad)
         etStockMinimo  = findViewById(R.id.etStockMinimo)
+        etCodigoBarras = findViewById(R.id.etCodigoBarras)
         ivProducto    = findViewById(R.id.ivProducto)
         layoutPlaceholder = findViewById(R.id.layoutPlaceholder)
         btnQuitarImagen   = findViewById(R.id.btnQuitarImagen)
@@ -111,6 +121,16 @@ class AgregarProductoActivity : AppCompatActivity() {
             title = "Editar producto"
         } else {
             title = "Agregar producto"
+        }
+
+        findViewById<Button>(R.id.btnEscanearCodigo).setOnClickListener {
+            val options = ScanOptions()
+            options.setDesiredBarcodeFormats(ScanOptions.ALL_CODE_TYPES)
+            options.setPrompt("Escanea el código de barras del producto")
+            options.setCameraId(0)
+            options.setBeepEnabled(true)
+            options.setOrientationLocked(true)
+            escanearCodigoLauncher.launch(options)
         }
 
         findViewById<Button>(R.id.btnCamara).setOnClickListener {
@@ -151,6 +171,7 @@ class AgregarProductoActivity : AppCompatActivity() {
         etPrecio.setText(producto.precio.toString())
         etCantidad.setText(producto.cantidad.toString())
         etStockMinimo.setText(producto.stockMinimo.toString())
+        etCodigoBarras.setText(producto.codigoBarras ?: "")
     }
 
     private fun verificarPermisoYAbrirCamara() {
@@ -221,6 +242,7 @@ class AgregarProductoActivity : AppCompatActivity() {
         val precioStr       = etPrecio.text.toString().trim()
         val cantidadStr     = etCantidad.text.toString().trim()
         val stockMinimoStr  = etStockMinimo.text.toString().trim()
+        val codigoBarras    = etCodigoBarras.text.toString().trim().ifEmpty { null }
 
         // Validaciones
         if (nombre.isEmpty()) {
@@ -262,7 +284,8 @@ class AgregarProductoActivity : AppCompatActivity() {
                 precio = precio,
                 cantidad = cantidad,
                 stockMinimo = stockMinimo,
-                imagenUri = imagenUri
+                imagenUri = imagenUri,
+                codigoBarras = codigoBarras
             )
             db.productoDao().actualizar(actualizado)
             Toast.makeText(this, "Producto actualizado", Toast.LENGTH_SHORT).show()
@@ -274,7 +297,8 @@ class AgregarProductoActivity : AppCompatActivity() {
                 precio = precio,
                 cantidad = cantidad,
                 stockMinimo = stockMinimo,
-                imagenUri = imagenUri
+                imagenUri = imagenUri,
+                codigoBarras = codigoBarras
             )
             db.productoDao().insertar(nuevo)
             Toast.makeText(this, "Producto guardado", Toast.LENGTH_SHORT).show()

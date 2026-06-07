@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.inventario.TiendaGUI.TiendaActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,8 +33,23 @@ class MainActivity : AppCompatActivity() {
 
     private val permisoNotificacionesLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) {
-        NotificationHelper.verificarYNotificarStockBajo(this)
+    ) { concedido ->
+        if (concedido) {
+            NotificationHelper.verificarYNotificarStockBajo(this)
+        }
+    }
+
+    private val escanearCodigoLauncher = registerForActivityResult(ScanContract()) { result ->
+        if (result.contents != null) {
+            val producto = db.productoDao().buscarPorCodigoBarras(result.contents)
+            if (producto != null) {
+                val intent = Intent(this, DetalleProductoActivity::class.java)
+                intent.putExtra("PRODUCTO_ID", producto.id)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "No se encontró producto con ese código", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +84,17 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, ReportesActivity::class.java))
         }
 
+        val fabEscanear = findViewById<FloatingActionButton>(R.id.fabEscanear)
+        fabEscanear.setOnClickListener {
+            val options = ScanOptions()
+            options.setDesiredBarcodeFormats(ScanOptions.ALL_CODE_TYPES)
+            options.setPrompt("Escanea el código de barras del producto")
+            options.setCameraId(0)
+            options.setBeepEnabled(true)
+            options.setOrientationLocked(true)
+            escanearCodigoLauncher.launch(options)
+        }
+
         findViewById<android.widget.Button>(R.id.btnIrTienda).setOnClickListener {
             startActivity(Intent(this, TiendaActivity::class.java))
         }
@@ -86,7 +115,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         cargarProductos()
-        NotificationHelper.verificarYNotificarStockBajo(this)
     }
 
     private fun solicitarPermisoNotificaciones() {

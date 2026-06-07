@@ -159,6 +159,62 @@
 
 
 
+        <!-- Sección de código de barras -->
+        <TextView
+            android:id="@+id/tvCodigoBarrasLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Código de barras"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            app:layout_constraintTop_toBottomOf="@id/tilStockMinimo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/layoutCodigoBarras"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/tvCodigoBarrasLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCodigoBarras"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Código"
+                android:textColorHint="#757575"
+                app:hintTextColor="#424242"
+                app:boxStrokeColor="#6200EE">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCodigoBarras"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#212121"
+                    android:inputType="text"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnEscanearCodigo"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Escanear"
+                android:textAllCaps="false"
+                android:textSize="13sp"/>
+
+        </LinearLayout>
+
         <!-- Sección de imagen del producto -->
         <TextView
             android:id="@+id/tvImagenLabel"
@@ -168,7 +224,7 @@
             android:text="Imagen del producto"
             android:textSize="14sp"
             android:textColor="#757575"
-            app:layout_constraintTop_toBottomOf="@id/tilStockMinimo"
+            app:layout_constraintTop_toBottomOf="@id/layoutCodigoBarras"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

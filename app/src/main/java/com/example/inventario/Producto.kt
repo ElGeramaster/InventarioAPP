@@ -13,5 +13,6 @@ data class Producto(
     val precio: Double,
     val cantidad: Int,
     val stockMinimo: Int,
-    val imagenUri: String? = null
+    val imagenUri: String? = null,
+    val codigoBarras: String? = null
 )

@@ -19,19 +19,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_carita"
-            android:contentDescription="Tienda"/>
+
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Tienda"
-            android:textSize="20sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"/>
 
