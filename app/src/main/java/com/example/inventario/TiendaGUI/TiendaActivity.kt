@@ -10,12 +10,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,6 +32,7 @@ import com.example.inventario.VentaDetalle
 class TiendaActivity : AppCompatActivity() {
 
     private lateinit var db: AppDatabase
+    private lateinit var drawerLayout: DrawerLayout
 
     private lateinit var rvCategorias: RecyclerView
     private lateinit var rvProductos: RecyclerView
@@ -63,6 +65,7 @@ class TiendaActivity : AppCompatActivity() {
         setContentView(R.layout.activity_tienda)
 
         db = AppDatabase.getInstance(this)
+        drawerLayout = findViewById(R.id.drawerLayout)
 
         rvCategorias    = findViewById(R.id.rvCategorias)
         rvProductos     = findViewById(R.id.rvProductosTienda)
@@ -79,31 +82,57 @@ class TiendaActivity : AppCompatActivity() {
         configurarProductos()
         configurarCarrito()
         configurarBuscador()
+        configurarMenuLateral()
 
         btnRealizar.setOnClickListener {
             realizarVenta()
         }
 
-        findViewById<ImageButton>(R.id.btnMenu).setOnClickListener { view ->
-            val popup = PopupMenu(this, view)
-            popup.menu.add(0, 1, 0, "Historial")
-            popup.menu.add(0, 2, 1, "Inventario")
-            popup.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    1 -> { startActivity(Intent(this, HistorialVentasActivity::class.java)); true }
-                    2 -> { startActivity(Intent(this, MainActivity::class.java)); true }
-                    else -> false
-                }
-            }
-            popup.show()
+        findViewById<ImageButton>(R.id.btnMenuHamburger).setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        // Al volver, recargar por si cambió el inventario
         recargarCategorias()
         filtrarProductos()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    private fun configurarMenuLateral() {
+        findViewById<TextView>(R.id.menuInventario).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+
+        findViewById<TextView>(R.id.menuHistorial).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            startActivity(Intent(this, HistorialVentasActivity::class.java))
+        }
+
+        findViewById<TextView>(R.id.menuProveedores).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            Toast.makeText(this, "Proveedores - Próximamente", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<TextView>(R.id.menuFiados).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            Toast.makeText(this, "Fiados a clientes - Próximamente", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<TextView>(R.id.menuAjustes).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            Toast.makeText(this, "Ajustes - Próximamente", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun configurarCategorias() {
