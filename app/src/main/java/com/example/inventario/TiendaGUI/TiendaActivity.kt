@@ -40,10 +40,10 @@ class TiendaActivity : AppCompatActivity() {
     private lateinit var cardBuscar: CardView
     private lateinit var etBuscar: EditText
     private lateinit var btnToggleBuscar: ImageButton
-    private lateinit var tvTotal: TextView
     private lateinit var btnRealizar: Button
     private lateinit var tvSinProductos: TextView
     private lateinit var tvCarritoVacio: TextView
+    private lateinit var fabEscanear: com.google.android.material.floatingactionbutton.FloatingActionButton
 
     private lateinit var categoriaAdapter: CategoriaTiendaAdapter
     private lateinit var productoAdapter: ProductoTiendaAdapter
@@ -73,10 +73,10 @@ class TiendaActivity : AppCompatActivity() {
         cardBuscar      = findViewById(R.id.cardBuscar)
         etBuscar        = findViewById(R.id.etBuscarTienda)
         btnToggleBuscar = findViewById(R.id.btnToggleBuscar)
-        tvTotal         = findViewById(R.id.tvTotalTienda)
         btnRealizar     = findViewById(R.id.btnRealizarVenta)
         tvSinProductos  = findViewById(R.id.tvSinProductos)
         tvCarritoVacio  = findViewById(R.id.tvCarritoVacio)
+        fabEscanear     = findViewById(R.id.fabEscanear)
 
         configurarCategorias()
         configurarProductos()
@@ -86,6 +86,10 @@ class TiendaActivity : AppCompatActivity() {
 
         btnRealizar.setOnClickListener {
             realizarVenta()
+        }
+
+        fabEscanear.setOnClickListener {
+            escanearCodigo()
         }
 
         findViewById<ImageButton>(R.id.btnMenuHamburger).setOnClickListener {
@@ -351,7 +355,7 @@ class TiendaActivity : AppCompatActivity() {
         carritoAdapter.actualizarLista(lista)
 
         val total = lista.sumOf { it.subtotal }
-        tvTotal.text = "TOTAL = $${"%.2f".format(total)} MXN"
+        btnRealizar.text = "REALIZAR VENTA - $${"%.2f".format(total)} MXN"
 
         if (lista.isEmpty()) {
             tvCarritoVacio.visibility = View.VISIBLE
@@ -362,6 +366,10 @@ class TiendaActivity : AppCompatActivity() {
             rvCarrito.visibility = View.VISIBLE
             btnRealizar.isEnabled = true
         }
+    }
+
+    private fun escanearCodigo() {
+        Toast.makeText(this, "Función de escaneo próximamente", Toast.LENGTH_SHORT).show()
     }
 
     private fun realizarVenta() {
