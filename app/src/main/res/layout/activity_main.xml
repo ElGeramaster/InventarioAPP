@@ -113,20 +113,6 @@
         android:contentDescription="Escanear código de barras"
         app:backgroundTint="#FF6F00"
         app:fabSize="mini"
-        app:layout_constraintBottom_toTopOf="@id/fabResumen"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- FAB Resumen -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabResumen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="12dp"
-        android:src="@android:drawable/ic_menu_sort_by_size"
-        android:contentDescription="Ver resumen"
-        app:backgroundTint="#1565C0"
-        app:fabSize="mini"
         app:layout_constraintBottom_toTopOf="@id/fabAgregar"
         app:layout_constraintEnd_toEndOf="parent"/>
 

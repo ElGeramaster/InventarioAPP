@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class ProductoAdapter(
     private var listaProductos: List<Producto>,
+    private val onToggleFavorito: (Producto) -> Unit = {},
     private val listener: (Producto) -> Unit
 ) : RecyclerView.Adapter<ProductoAdapter.ProductoViewHolder>() {
 
@@ -23,6 +24,7 @@ class ProductoAdapter(
         val viewIndicador: View = itemView.findViewById(R.id.viewIndicador)
         val ivThumbnail: ImageView = itemView.findViewById(R.id.ivThumbnail)
         val cardThumbnail: CardView = itemView.findViewById(R.id.cardThumbnail)
+        val ivFavorito: ImageView = itemView.findViewById(R.id.ivFavorito)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductoViewHolder {
@@ -59,6 +61,12 @@ class ProductoAdapter(
             holder.viewIndicador.setBackgroundColor(Color.parseColor("#43A047"))
             holder.tvCantidad.setTextColor(Color.parseColor("#212121"))
         }
+
+        // Corazón de favorito
+        holder.ivFavorito.setImageResource(
+            if (producto.favorito) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline
+        )
+        holder.ivFavorito.setOnClickListener { onToggleFavorito(producto) }
 
         holder.itemView.setOnClickListener { listener(producto) }
     }

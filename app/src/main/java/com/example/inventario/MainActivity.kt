@@ -79,11 +79,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, AgregarProductoActivity::class.java))
         }
 
-        val fabResumen = findViewById<FloatingActionButton>(R.id.fabResumen)
-        fabResumen.setOnClickListener {
-            startActivity(Intent(this, ReportesActivity::class.java))
-        }
-
         val fabEscanear = findViewById<FloatingActionButton>(R.id.fabEscanear)
         fabEscanear.setOnClickListener {
             val options = ScanOptions()
@@ -130,7 +125,13 @@ class MainActivity : AppCompatActivity() {
     private fun cargarProductos() {
         val productos = db.productoDao().obtenerTodos()
         if (!::adapter.isInitialized) {
-            adapter = ProductoAdapter(productos) { producto ->
+            adapter = ProductoAdapter(
+                productos,
+                onToggleFavorito = { producto ->
+                    db.productoDao().actualizar(producto.copy(favorito = !producto.favorito))
+                    filtrarProductos()
+                }
+            ) { producto ->
                 val intent = Intent(this, DetalleProductoActivity::class.java)
                 intent.putExtra("PRODUCTO_ID", producto.id)
                 startActivity(intent)

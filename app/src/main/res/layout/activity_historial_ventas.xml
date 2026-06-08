@@ -36,16 +36,14 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnEliminarHistorial"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:backgroundTint="#C62828"
-            android:text="Limpiar"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp" />
+        <ImageButton
+            android:id="@+id/btnMenuHistorial"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_menu_dots"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:contentDescription="Más opciones" />
 
     </LinearLayout>
 

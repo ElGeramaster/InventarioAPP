@@ -14,5 +14,6 @@ data class Producto(
     val cantidad: Int,
     val stockMinimo: Int,
     val imagenUri: String? = null,
-    val codigoBarras: String? = null
+    val codigoBarras: String? = null,
+    val favorito: Boolean = false
 )

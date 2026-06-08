@@ -56,7 +56,7 @@
             android:textColor="#212121"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/cardThumbnail"
-            app:layout_constraintEnd_toStartOf="@id/tvCantidad"/>
+            app:layout_constraintEnd_toStartOf="@id/layoutDerecha"/>
 
         <TextView
             android:id="@+id/tvCategoria"
@@ -69,7 +69,7 @@
             android:textColor="#757575"
             app:layout_constraintTop_toBottomOf="@id/tvNombre"
             app:layout_constraintStart_toEndOf="@id/cardThumbnail"
-            app:layout_constraintEnd_toStartOf="@id/tvCantidad"/>
+            app:layout_constraintEnd_toStartOf="@id/layoutDerecha"/>
 
         <TextView
             android:id="@+id/tvPrecio"
@@ -82,30 +82,51 @@
             android:textColor="#388E3C"
             app:layout_constraintTop_toBottomOf="@id/tvCategoria"
             app:layout_constraintStart_toEndOf="@id/cardThumbnail"
-            app:layout_constraintEnd_toStartOf="@id/tvCantidad"/>
+            app:layout_constraintEnd_toStartOf="@id/layoutDerecha"/>
 
-        <!-- Cantidad (esquina derecha) -->
-        <TextView
-            android:id="@+id/tvCantidad"
+        <!-- Columna derecha: favorito + cantidad -->
+        <LinearLayout
+            android:id="@+id/layoutDerecha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="#212121"
+            android:orientation="vertical"
+            android:gravity="end"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/tvUnidades"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="unidades"
-            android:textSize="11sp"
-            android:textColor="#9E9E9E"
-            app:layout_constraintTop_toBottomOf="@id/tvCantidad"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <!-- Corazón de favorito (esquina superior derecha) -->
+            <ImageView
+                android:id="@+id/ivFavorito"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="end"
+                android:padding="2dp"
+                android:src="@drawable/ic_heart_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Marcar como favorito"/>
+
+            <!-- Cantidad -->
+            <TextView
+                android:id="@+id/tvCantidad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="0"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="#212121"/>
+
+            <TextView
+                android:id="@+id/tvUnidades"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="unidades"
+                android:textSize="11sp"
+                android:textColor="#9E9E9E"/>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

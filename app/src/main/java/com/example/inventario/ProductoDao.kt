@@ -34,4 +34,10 @@ interface ProductoDao {
 
     @Query("SELECT * FROM productos WHERE codigoBarras = :codigo LIMIT 1")
     fun buscarPorCodigoBarras(codigo: String): Producto?
+
+    @Query("SELECT * FROM productos WHERE favorito = 1 ORDER BY nombre ASC")
+    fun obtenerFavoritos(): List<Producto>
+
+    @Query("SELECT * FROM productos WHERE favorito = 1 AND (nombre LIKE '%' || :busqueda || '%') ORDER BY nombre ASC")
+    fun buscarFavoritos(busqueda: String): List<Producto>
 }
