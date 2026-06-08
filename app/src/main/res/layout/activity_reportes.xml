@@ -27,7 +27,7 @@
                 android:id="@+id/tvTituloResumen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Datos de tu Mercancia"
+                android:text="Mi Mercancía"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#212121"

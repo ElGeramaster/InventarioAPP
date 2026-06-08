@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:text="$0.00 MXN"
-            android:textSize="14sp"
+            android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="#2E7D32"/>
 
@@ -68,18 +68,18 @@
             android:id="@+id/tvStockProducto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Stock: 0"
-            android:textSize="10sp"
+            android:text="Cantidad: 0"
+            android:textSize="15sp"
             android:textColor="#757575"/>
 
         <Button
             android:id="@+id/btnAgregarTienda"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:text="Agregar"
             android:textAllCaps="false"
-            android:textSize="12sp"
+            android:textSize="16sp"
             android:textColor="#FFFFFF"
             android:backgroundTint="#43A047"
             android:minHeight="36dp"/>

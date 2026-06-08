@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">inventario</string>
+    <string name="menu_abrir">Abrir menú</string>
+    <string name="menu_titulo">MENÚ</string>
+    <string name="menu_inventario">📦 Inventario</string>
+    <string name="menu_historial">📜 Historial de Ventas</string>
+    <string name="menu_proveedores">🚚 Proveedores</string>
+    <string name="menu_fiados">👥 Fiados</string>
+    <string name="menu_ajustes">⚙️ Ajustes</string>
+    <string name="tienda">Tienda</string>
+    <string name="buscar_producto">Buscar producto...</string>
+    <string name="no_hay_productos">No hay productos disponibles</string>
+    <string name="carrito_vacio">Carrito vacío</string>
+    <string name="total_zero">TOTAL = $0.00 MXN</string>
+    <string name="realizar">Realizar</string>
+    <string name="eliminar_producto">Eliminar producto</string>
+    <string name="editar_producto">Editar producto</string>
 </resources>

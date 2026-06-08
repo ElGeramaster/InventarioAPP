@@ -228,18 +228,6 @@
         </androidx.cardview.widget.CardView>
 
         <!-- Botones de acción -->
-        <Button
-            android:id="@+id/btnEditar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="Editar producto"
-            android:textAllCaps="false"
-            android:backgroundTint="#1565C0"
-            app:layout_constraintTop_toBottomOf="@id/cardDetalle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
 
         <Button
             android:id="@+id/btnEliminar"
@@ -247,15 +235,31 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
-            android:text="Eliminar producto"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/eliminar_producto"
             android:textAllCaps="false"
             android:textColor="#C62828"
-            app:strokeColor="#C62828"
-            app:layout_constraintTop_toBottomOf="@id/btnEditar"
+            app:layout_constraintEnd_toStartOf="@+id/btnEditar"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/cardDetalle"
+            app:strokeColor="#C62828" />
+
+        <Button
+            android:id="@+id/btnEditar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="#1565C0"
+            android:text="@string/editar_producto"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="@+id/btnEliminar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnEliminar"
+            app:layout_constraintTop_toTopOf="@id/btnEliminar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
