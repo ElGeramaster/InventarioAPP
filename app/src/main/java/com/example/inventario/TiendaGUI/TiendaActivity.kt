@@ -1,5 +1,6 @@
 package com.example.inventario.TiendaGUI
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -29,8 +31,6 @@ import com.example.inventario.R
 import com.example.inventario.ReportesActivity
 import com.example.inventario.Venta
 import com.example.inventario.VentaDetalle
-import com.journeyapps.barcodescanner.ScanContract
-import com.journeyapps.barcodescanner.ScanOptions
 
 class TiendaActivity : AppCompatActivity() {
 
@@ -58,14 +58,13 @@ class TiendaActivity : AppCompatActivity() {
     private var categoriaSeleccionada: String = CATEGORIA_TODOS
     private var busquedaActual: String = ""
 
-    private val escanearCodigoLauncher = registerForActivityResult(ScanContract()) { result ->
-        if (result.contents != null) {
-            val producto = db.productoDao().buscarPorCodigoBarras(result.contents)
-            if (producto != null) {
-                agregarAlCarrito(producto)
-                Toast.makeText(this, "Agregado al carrito: ${producto.nombre}", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "No se encontró un producto con ese código QR", Toast.LENGTH_SHORT).show()
+    private val escanearCodigoLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val codigos = result.data?.getStringArrayListExtra(ContinuousScanActivity.EXTRA_CODIGOS)
+            if (!codigos.isNullOrEmpty()) {
+                procesarCodigosEscaneados(codigos)
             }
         }
     }
@@ -121,27 +120,51 @@ class TiendaActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+        when {
+            drawerLayout.isDrawerOpen(GravityCompat.START) ->
+                drawerLayout.closeDrawer(GravityCompat.START)
+            carrito.isNotEmpty() ->
+                confirmarSalida { finish() }
+            else ->
+                super.onBackPressed()
         }
+    }
+
+    /**
+     * Si hay productos en el carrito, pide confirmación antes de salir para
+     * no perder la venta en curso. Si el carrito está vacío, ejecuta la acción
+     * directamente.
+     */
+    private fun confirmarSalida(accion: () -> Unit) {
+        if (carrito.isEmpty()) {
+            accion()
+            return
+        }
+        AlertDialog.Builder(this)
+            .setTitle("¿Salir de la venta?")
+            .setMessage(
+                "Tienes productos en el carrito. Si sales ahora se perderá " +
+                        "la venta en curso.\n\n¿Deseas salir?"
+            )
+            .setPositiveButton("Salir") { _, _ -> accion() }
+            .setNegativeButton("Seguir en la venta", null)
+            .show()
     }
 
     private fun configurarMenuLateral() {
         findViewById<TextView>(R.id.menuInventario).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
-            startActivity(Intent(this, MainActivity::class.java))
+            confirmarSalida { startActivity(Intent(this, MainActivity::class.java)) }
         }
 
         findViewById<TextView>(R.id.menuReportes).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
-            startActivity(Intent(this, ReportesActivity::class.java))
+            confirmarSalida { startActivity(Intent(this, ReportesActivity::class.java)) }
         }
 
         findViewById<TextView>(R.id.menuHistorial).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
-            startActivity(Intent(this, HistorialVentasActivity::class.java))
+            confirmarSalida { startActivity(Intent(this, HistorialVentasActivity::class.java)) }
         }
 
         findViewById<TextView>(R.id.menuProveedores).setOnClickListener {
@@ -261,17 +284,23 @@ class TiendaActivity : AppCompatActivity() {
         }
     }
 
-    private fun agregarAlCarrito(producto: Producto, cantidad: Int = 1) {
+    private fun agregarAlCarrito(
+        producto: Producto,
+        cantidad: Int = 1,
+        mostrarMensajeStock: Boolean = true
+    ): Boolean {
         val itemExistente = carrito[producto.id]
         val cantidadActual = itemExistente?.cantidad ?: 0
 
         if (cantidadActual + cantidad > producto.cantidad) {
-            Toast.makeText(
-                this,
-                "No hay suficiente stock de ${producto.nombre}",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
+            if (mostrarMensajeStock) {
+                Toast.makeText(
+                    this,
+                    "No hay suficiente stock de ${producto.nombre}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            return false
         }
 
         if (itemExistente != null) {
@@ -280,6 +309,7 @@ class TiendaActivity : AppCompatActivity() {
             carrito[producto.id] = CarritoItem(producto, cantidad)
         }
         actualizarCarritoUI()
+        return true
     }
 
     private fun mostrarModalProducto(producto: Producto) {
@@ -394,13 +424,34 @@ class TiendaActivity : AppCompatActivity() {
     }
 
     private fun escanearCodigo() {
-        val options = ScanOptions()
-        options.setDesiredBarcodeFormats(ScanOptions.ALL_CODE_TYPES)
-        options.setPrompt("Escanea el código QR del producto")
-        options.setCameraId(0)
-        options.setBeepEnabled(true)
-        options.setOrientationLocked(true)
-        escanearCodigoLauncher.launch(options)
+        escanearCodigoLauncher.launch(Intent(this, ContinuousScanActivity::class.java))
+    }
+
+    private fun procesarCodigosEscaneados(codigos: List<String>) {
+        if (codigos.isEmpty()) return
+
+        var agregados = 0
+        var noEncontrados = 0
+        var sinStock = 0
+
+        for (codigo in codigos) {
+            val producto = db.productoDao().buscarPorCodigoBarras(codigo)
+            when {
+                producto == null -> noEncontrados++
+                agregarAlCarrito(producto, mostrarMensajeStock = false) -> agregados++
+                else -> sinStock++
+            }
+        }
+
+        val mensaje = buildString {
+            append(
+                if (agregados > 0) "$agregados producto(s) agregado(s) al carrito"
+                else "No se agregaron productos"
+            )
+            if (sinStock > 0) append(" · $sinStock sin stock suficiente")
+            if (noEncontrados > 0) append(" · $noEncontrados sin coincidencia")
+        }
+        Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show()
     }
 
     private fun realizarVenta() {
