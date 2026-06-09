@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Producto::class, Venta::class, VentaDetalle::class], version = 5)
+@Database(entities = [Producto::class, Venta::class, VentaDetalle::class], version = 6)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao
@@ -61,6 +61,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE productos ADD COLUMN favorito INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instancia ?: synchronized(this) {
                 instancia ?: Room.databaseBuilder(
@@ -68,7 +74,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "inventario_db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                     .allowMainThreadQueries()
                     .build()
                     .also { instancia = it }

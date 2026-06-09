@@ -45,7 +45,13 @@ class StockBajoFragment : Fragment() {
             recyclerView.visibility = View.VISIBLE
             layoutVacio.visibility  = View.GONE
 
-            val adapter = ProductoAdapter(productos) { producto ->
+            val adapter = ProductoAdapter(
+                productos,
+                onToggleFavorito = { producto ->
+                    db.productoDao().actualizar(producto.copy(favorito = !producto.favorito))
+                    cargarStockBajo()
+                }
+            ) { producto ->
                 // Al hacer clic va al detalle del producto
                 val intent = android.content.Intent(requireContext(), DetalleProductoActivity::class.java)
                 intent.putExtra("PRODUCTO_ID", producto.id)

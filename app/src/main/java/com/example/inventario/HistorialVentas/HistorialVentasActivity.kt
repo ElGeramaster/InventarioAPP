@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -40,6 +41,10 @@ class HistorialVentasActivity : AppCompatActivity() {
     private enum class Filtro { SIETE_DIAS, MES, ANIO, TODO }
     private var filtroActual = Filtro.SIETE_DIAS
 
+    companion object {
+        private const val MENU_LIMPIAR_TODO = 1
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
         super.onCreate(savedInstanceState)
@@ -69,8 +74,18 @@ class HistorialVentasActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.btnVolver).setOnClickListener { finish() }
 
-        findViewById<Button>(R.id.btnEliminarHistorial).setOnClickListener {
-            confirmarEliminarTodo()
+        findViewById<ImageButton>(R.id.btnMenuHistorial).setOnClickListener { vista ->
+            val popup = PopupMenu(this, vista)
+            popup.menu.add(0, MENU_LIMPIAR_TODO, 0, "Limpiar Todo")
+            popup.setOnMenuItemClickListener { item ->
+                if (item.itemId == MENU_LIMPIAR_TODO) {
+                    confirmarEliminarTodo()
+                    true
+                } else {
+                    false
+                }
+            }
+            popup.show()
         }
 
         btn7Dias.setOnClickListener { cambiarFiltro(Filtro.SIETE_DIAS) }

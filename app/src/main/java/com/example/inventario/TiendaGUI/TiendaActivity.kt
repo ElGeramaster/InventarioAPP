@@ -26,8 +26,11 @@ import com.example.inventario.MainActivity
 import com.example.inventario.NotificationHelper
 import com.example.inventario.Producto
 import com.example.inventario.R
+import com.example.inventario.ReportesActivity
 import com.example.inventario.Venta
 import com.example.inventario.VentaDetalle
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 
 class TiendaActivity : AppCompatActivity() {
 
@@ -55,8 +58,21 @@ class TiendaActivity : AppCompatActivity() {
     private var categoriaSeleccionada: String = CATEGORIA_TODOS
     private var busquedaActual: String = ""
 
+    private val escanearCodigoLauncher = registerForActivityResult(ScanContract()) { result ->
+        if (result.contents != null) {
+            val producto = db.productoDao().buscarPorCodigoBarras(result.contents)
+            if (producto != null) {
+                agregarAlCarrito(producto)
+                Toast.makeText(this, "Agregado al carrito: ${producto.nombre}", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "No se encontró un producto con ese código QR", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     companion object {
         private const val CATEGORIA_TODOS = "Todos los productos"
+        private const val CATEGORIA_FAVORITOS = "Favoritos"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,6 +134,11 @@ class TiendaActivity : AppCompatActivity() {
             startActivity(Intent(this, MainActivity::class.java))
         }
 
+        findViewById<TextView>(R.id.menuReportes).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            startActivity(Intent(this, ReportesActivity::class.java))
+        }
+
         findViewById<TextView>(R.id.menuHistorial).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
             startActivity(Intent(this, HistorialVentasActivity::class.java))
@@ -166,7 +187,7 @@ class TiendaActivity : AppCompatActivity() {
     }
 
     private fun obtenerListaCategorias(): List<String> {
-        val lista = mutableListOf(CATEGORIA_TODOS)
+        val lista = mutableListOf(CATEGORIA_TODOS, CATEGORIA_FAVORITOS)
         lista.addAll(db.productoDao().obtenerCategorias())
         return lista
     }
@@ -221,6 +242,10 @@ class TiendaActivity : AppCompatActivity() {
                 db.productoDao().obtenerTodos()
             categoriaSeleccionada == CATEGORIA_TODOS ->
                 db.productoDao().buscar(busquedaActual)
+            categoriaSeleccionada == CATEGORIA_FAVORITOS && busquedaActual.isEmpty() ->
+                db.productoDao().obtenerFavoritos()
+            categoriaSeleccionada == CATEGORIA_FAVORITOS ->
+                db.productoDao().buscarFavoritos(busquedaActual)
             else ->
                 db.productoDao().buscarPorCategoria(categoriaSeleccionada, busquedaActual)
         }
@@ -369,7 +394,13 @@ class TiendaActivity : AppCompatActivity() {
     }
 
     private fun escanearCodigo() {
-        Toast.makeText(this, "Función de escaneo próximamente", Toast.LENGTH_SHORT).show()
+        val options = ScanOptions()
+        options.setDesiredBarcodeFormats(ScanOptions.ALL_CODE_TYPES)
+        options.setPrompt("Escanea el código QR del producto")
+        options.setCameraId(0)
+        options.setBeepEnabled(true)
+        options.setOrientationLocked(true)
+        escanearCodigoLauncher.launch(options)
     }
 
     private fun realizarVenta() {
