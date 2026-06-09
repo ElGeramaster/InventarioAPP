@@ -52,8 +52,8 @@ class TiendaActivity : AppCompatActivity() {
     private lateinit var productoAdapter: ProductoTiendaAdapter
     private lateinit var carritoAdapter: CarritoItemAdapter
 
-    // Estado del carrito: id producto -> CarritoItem
-    private val carrito = linkedMapOf<Int, CarritoItem>()
+    // Estado del carrito: clave ("idProducto-U" pieza / "idProducto-P" peso) -> CarritoItem
+    private val carrito = linkedMapOf<String, CarritoItem>()
 
     private var categoriaSeleccionada: String = CATEGORIA_TODOS
     private var busquedaActual: String = ""
@@ -219,8 +219,14 @@ class TiendaActivity : AppCompatActivity() {
         rvProductos.layoutManager = GridLayoutManager(this, 3)
         productoAdapter = ProductoTiendaAdapter(
             emptyList(),
-            onAgregar = { producto -> agregarAlCarrito(producto) },
-            onVerDetalle = { producto -> mostrarModalProducto(producto) }
+            onAgregar = { producto ->
+                if (producto.vendePorPeso) mostrarOpcionesVenta(producto)
+                else agregarAlCarrito(producto)
+            },
+            onVerDetalle = { producto ->
+                if (producto.vendePorPeso) mostrarOpcionesVenta(producto)
+                else mostrarModalProducto(producto)
+            }
         )
         rvProductos.adapter = productoAdapter
         filtrarProductos()
@@ -284,12 +290,19 @@ class TiendaActivity : AppCompatActivity() {
         }
     }
 
+    // --- Claves del carrito (un producto puede tener línea por pieza y por peso) ---
+    private fun clavePieza(id: Int) = "$id-U"
+    private fun clavePeso(id: Int) = "$id-P"
+    private fun claveDe(item: CarritoItem) =
+        if (item.porPeso) clavePeso(item.producto.id) else clavePieza(item.producto.id)
+
     private fun agregarAlCarrito(
         producto: Producto,
         cantidad: Int = 1,
         mostrarMensajeStock: Boolean = true
     ): Boolean {
-        val itemExistente = carrito[producto.id]
+        val clave = clavePieza(producto.id)
+        val itemExistente = carrito[clave]
         val cantidadActual = itemExistente?.cantidad ?: 0
 
         if (cantidadActual + cantidad > producto.cantidad) {
@@ -306,14 +319,100 @@ class TiendaActivity : AppCompatActivity() {
         if (itemExistente != null) {
             itemExistente.cantidad += cantidad
         } else {
-            carrito[producto.id] = CarritoItem(producto, cantidad)
+            carrito[clave] = CarritoItem(producto, cantidad = cantidad, porPeso = false)
         }
         actualizarCarritoUI()
         return true
     }
 
+    /** Agrega [gramos] de un producto que se vende por peso (sin control de stock). */
+    private fun agregarPesoAlCarrito(producto: Producto, gramos: Int) {
+        if (gramos <= 0) return
+        val clave = clavePeso(producto.id)
+        val itemExistente = carrito[clave]
+        if (itemExistente != null) {
+            itemExistente.gramos += gramos
+        } else {
+            carrito[clave] = CarritoItem(producto, gramos = gramos, porPeso = true)
+        }
+        actualizarCarritoUI()
+    }
+
+    /**
+     * Para frutas y verduras: si el producto también se vende por pieza pregunta
+     * cómo venderlo; si solo es por peso, abre directo el selector de kilos.
+     */
+    private fun mostrarOpcionesVenta(producto: Producto) {
+        if (producto.seVendePorPieza && producto.precio > 0) {
+            AlertDialog.Builder(this)
+                .setTitle(producto.nombre)
+                .setItems(arrayOf("Por pieza", "Por peso (kg)")) { _, which ->
+                    when (which) {
+                        0 -> mostrarModalProducto(producto)
+                        1 -> mostrarDialogoPeso(producto)
+                    }
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        } else {
+            mostrarDialogoPeso(producto)
+        }
+    }
+
+    private fun mostrarDialogoPeso(producto: Producto) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_peso_producto, null)
+
+        val tvNombre = dialogView.findViewById<TextView>(R.id.tvPesoNombre)
+        val tvPrecioKilo = dialogView.findViewById<TextView>(R.id.tvPesoPrecioKilo)
+        val btnCuarto = dialogView.findViewById<Button>(R.id.btnCuartoKilo)
+        val btnMedio = dialogView.findViewById<Button>(R.id.btnMedioKilo)
+        val btnKilo = dialogView.findViewById<Button>(R.id.btnUnKilo)
+        val etKg = dialogView.findViewById<EditText>(R.id.etPesoKg)
+        val tvTotal = dialogView.findViewById<TextView>(R.id.tvPesoTotal)
+
+        tvNombre.text = producto.nombre
+        tvPrecioKilo.text = "$${"%.2f".format(producto.precioKilo)} / kg"
+
+        fun gramosActuales(): Int {
+            val kg = etKg.text.toString().trim().toDoubleOrNull() ?: 0.0
+            return Math.round(kg * 1000).toInt()
+        }
+
+        fun actualizarTotal() {
+            val total = producto.precioKilo * gramosActuales() / 1000.0
+            tvTotal.text = "Total: $${"%.2f".format(total)} MXN"
+        }
+
+        etKg.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                actualizarTotal()
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        btnCuarto.setOnClickListener { etKg.setText("0.25") }
+        btnMedio.setOnClickListener { etKg.setText("0.5") }
+        btnKilo.setOnClickListener { etKg.setText("1") }
+
+        actualizarTotal()
+
+        AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton("Agregar a la venta") { _, _ ->
+                val gramos = gramosActuales()
+                if (gramos <= 0) {
+                    Toast.makeText(this, "Indica una cantidad en kg", Toast.LENGTH_SHORT).show()
+                } else {
+                    agregarPesoAlCarrito(producto, gramos)
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
     private fun mostrarModalProducto(producto: Producto) {
-        val cantidadEnCarrito = carrito[producto.id]?.cantidad ?: 0
+        val cantidadEnCarrito = carrito[clavePieza(producto.id)]?.cantidad ?: 0
         val disponible = producto.cantidad - cantidadEnCarrito
 
         if (disponible <= 0) {
@@ -383,6 +482,19 @@ class TiendaActivity : AppCompatActivity() {
     }
 
     private fun mostrarOpcionesItem(item: CarritoItem) {
+        if (item.porPeso) {
+            // Las líneas por peso solo se pueden quitar completas.
+            AlertDialog.Builder(this)
+                .setTitle("${item.producto.nombre} (${item.textoCantidad})")
+                .setItems(arrayOf("Eliminar del carrito")) { _, _ ->
+                    carrito.remove(claveDe(item))
+                    actualizarCarritoUI()
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+            return
+        }
+
         val opciones = arrayOf("Quitar uno", "Eliminar del carrito")
         AlertDialog.Builder(this)
             .setTitle(item.producto.nombre)
@@ -391,12 +503,12 @@ class TiendaActivity : AppCompatActivity() {
                     0 -> {
                         item.cantidad -= 1
                         if (item.cantidad <= 0) {
-                            carrito.remove(item.producto.id)
+                            carrito.remove(claveDe(item))
                         }
                         actualizarCarritoUI()
                     }
                     1 -> {
-                        carrito.remove(item.producto.id)
+                        carrito.remove(claveDe(item))
                         actualizarCarritoUI()
                     }
                 }
@@ -458,7 +570,8 @@ class TiendaActivity : AppCompatActivity() {
         if (carrito.isEmpty()) return
 
         val total = carrito.values.sumOf { it.subtotal }
-        val cantidadItems = carrito.values.sumOf { it.cantidad }
+        // Cada línea por peso cuenta como 1 artículo; las de pieza cuentan sus unidades.
+        val cantidadItems = carrito.values.sumOf { if (it.porPeso) 1 else it.cantidad }
 
         AlertDialog.Builder(this)
             .setTitle("Confirmar venta")
@@ -467,8 +580,12 @@ class TiendaActivity : AppCompatActivity() {
                         "$${"%.2f".format(total)} MXN.\n\n¿Continuar?"
             )
             .setPositiveButton("Realizar") { _, _ ->
-                val ganancia = carrito.values.sumOf {
-                    (it.producto.precio - it.producto.precioCompra) * it.cantidad
+                val ganancia = carrito.values.sumOf { item ->
+                    if (item.porPeso) {
+                        (item.producto.precioKilo - item.producto.precioCompraKilo) * item.gramos / 1000.0
+                    } else {
+                        (item.producto.precio - item.producto.precioCompra) * item.cantidad
+                    }
                 }
                 val venta = Venta(
                     total = total,
@@ -477,18 +594,32 @@ class TiendaActivity : AppCompatActivity() {
                 )
                 val ventaId = db.ventaDao().insertarVenta(venta).toInt()
                 val detalles = carrito.values.map { item ->
-                    VentaDetalle(
-                        ventaId = ventaId,
-                        productoId = item.producto.id,
-                        productoNombre = item.producto.nombre,
-                        cantidad = item.cantidad,
-                        precioUnitario = item.producto.precio,
-                        precioCompra = item.producto.precioCompra,
-                        subtotal = item.subtotal
-                    )
+                    if (item.porPeso) {
+                        VentaDetalle(
+                            ventaId = ventaId,
+                            productoId = item.producto.id,
+                            productoNombre = "${item.producto.nombre} (${item.textoCantidad})",
+                            cantidad = 1,
+                            precioUnitario = item.producto.precioKilo,
+                            precioCompra = item.producto.precioCompraKilo,
+                            subtotal = item.subtotal
+                        )
+                    } else {
+                        VentaDetalle(
+                            ventaId = ventaId,
+                            productoId = item.producto.id,
+                            productoNombre = item.producto.nombre,
+                            cantidad = item.cantidad,
+                            precioUnitario = item.producto.precio,
+                            precioCompra = item.producto.precioCompra,
+                            subtotal = item.subtotal
+                        )
+                    }
                 }
                 db.ventaDao().insertarDetalles(detalles)
+                // Solo las ventas por pieza descuentan stock.
                 for (item in carrito.values) {
+                    if (item.porPeso) continue
                     val productoActualizado = item.producto.copy(
                         cantidad = item.producto.cantidad - item.cantidad
                     )

@@ -159,6 +159,87 @@
 
 
 
+        <!-- Sección frutas y verduras (venta por peso) -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchPorPeso"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Se vende por peso (frutas y verduras)"
+            android:textColor="#424242"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/tilStockMinimo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvPesoAyuda"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Si lo activas, el producto se puede vender por kilo (¼, ½, 1 kg...). Si solo se vende por peso, deja el precio de venta y la cantidad en blanco."
+            android:textSize="12sp"
+            android:textColor="#9E9E9E"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/switchPorPeso"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/layoutPeso"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/tvPesoAyuda"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilPrecioKilo"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:hint="Precio por kilo"
+                android:textColorHint="#757575"
+                app:hintTextColor="#424242"
+                app:boxStrokeColor="#6200EE">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPrecioKilo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#212121"
+                    android:inputType="numberDecimal"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilPrecioCompraKilo"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:hint="Compra x kilo (opc.)"
+                android:textColorHint="#757575"
+                app:hintTextColor="#424242"
+                app:boxStrokeColor="#6200EE">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPrecioCompraKilo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#212121"
+                    android:inputType="numberDecimal"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
         <!-- Sección de código de barras -->
         <TextView
             android:id="@+id/tvCodigoBarrasLabel"
@@ -168,7 +249,7 @@
             android:text="Código de barras"
             android:textSize="14sp"
             android:textColor="#757575"
-            app:layout_constraintTop_toBottomOf="@id/tilStockMinimo"
+            app:layout_constraintTop_toBottomOf="@id/layoutPeso"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

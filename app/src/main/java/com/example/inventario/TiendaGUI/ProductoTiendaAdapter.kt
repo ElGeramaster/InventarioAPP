@@ -38,8 +38,13 @@ class ProductoTiendaAdapter(
         val producto = productos[position]
 
         holder.tvNombre.text = producto.nombre
-        holder.tvPrecio.text = "$${"%.2f".format(producto.precio)} MXN"
-        holder.tvStock.text = "Stock: ${producto.cantidad}"
+        if (producto.vendePorPeso) {
+            holder.tvPrecio.text = "$${"%.2f".format(producto.precioKilo)} /kg"
+            holder.tvStock.text = if (producto.precio > 0) "Pieza o kilo" else "Por kilo"
+        } else {
+            holder.tvPrecio.text = "$${"%.2f".format(producto.precio)} MXN"
+            holder.tvStock.text = "Stock: ${producto.cantidad}"
+        }
 
         // Mostrar imagen si existe
         if (!producto.imagenUri.isNullOrEmpty()) {
@@ -57,7 +62,7 @@ class ProductoTiendaAdapter(
             holder.tvSinFoto.visibility = View.VISIBLE
         }
 
-        if (producto.cantidad <= 0) {
+        if (!producto.vendePorPeso && producto.cantidad <= 0) {
             holder.btnAgregar.isEnabled = false
             holder.btnAgregar.text = "Sin stock"
             holder.btnAgregar.backgroundTintList = ColorStateList.valueOf(

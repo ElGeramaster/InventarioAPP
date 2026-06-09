@@ -86,8 +86,14 @@ class DetalleProductoActivity : AppCompatActivity() {
         tvNombre.text = p.nombre
         tvCategoria.text = p.categoria
         tvPrecioCompra.text = "$${"%.2f".format(p.precioCompra)}"
-        tvPrecio.text = "$${"%.2f".format(p.precio)}"
-        tvCantidad.text = "${p.cantidad} unidades"
+        if (p.vendePorPeso) {
+            val pieza = if (p.precio > 0) "  ·  pieza $${"%.2f".format(p.precio)}" else ""
+            tvPrecio.text = "$${"%.2f".format(p.precioKilo)} / kg$pieza"
+            tvCantidad.text = if (p.precio > 0) "${p.cantidad} unidades (por pieza)" else "Se vende por kilo"
+        } else {
+            tvPrecio.text = "$${"%.2f".format(p.precio)}"
+            tvCantidad.text = "${p.cantidad} unidades"
+        }
         tvStockMinimo.text = "${p.stockMinimo} unidades"
 
         // Mostrar imagen si existe
@@ -112,8 +118,8 @@ class DetalleProductoActivity : AppCompatActivity() {
             labelCodigoBarras.visibility = View.GONE
         }
 
-        // Mostrar alerta si el stock es bajo
-        if (p.cantidad <= p.stockMinimo) {
+        // Mostrar alerta si el stock es bajo (solo productos que se venden por pieza)
+        if (p.seVendePorPieza && p.cantidad <= p.stockMinimo) {
             tvAlertaStock.visibility = View.VISIBLE
         } else {
             tvAlertaStock.visibility = View.GONE

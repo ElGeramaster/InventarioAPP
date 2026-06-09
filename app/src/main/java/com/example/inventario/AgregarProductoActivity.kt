@@ -35,6 +35,11 @@ class AgregarProductoActivity : AppCompatActivity() {
     private lateinit var etCantidad: TextInputEditText
     private lateinit var etStockMinimo: TextInputEditText
     private lateinit var etCodigoBarras: TextInputEditText
+    private lateinit var switchPorPeso: com.google.android.material.switchmaterial.SwitchMaterial
+    private lateinit var layoutPeso: View
+    private lateinit var tvPesoAyuda: View
+    private lateinit var etPrecioKilo: TextInputEditText
+    private lateinit var etPrecioCompraKilo: TextInputEditText
     private lateinit var ivProducto: ImageView
     private lateinit var layoutPlaceholder: View
     private lateinit var btnQuitarImagen: Button
@@ -103,9 +108,18 @@ class AgregarProductoActivity : AppCompatActivity() {
         etCantidad     = findViewById(R.id.etCantidad)
         etStockMinimo  = findViewById(R.id.etStockMinimo)
         etCodigoBarras = findViewById(R.id.etCodigoBarras)
+        switchPorPeso  = findViewById(R.id.switchPorPeso)
+        layoutPeso     = findViewById(R.id.layoutPeso)
+        tvPesoAyuda    = findViewById(R.id.tvPesoAyuda)
+        etPrecioKilo   = findViewById(R.id.etPrecioKilo)
+        etPrecioCompraKilo = findViewById(R.id.etPrecioCompraKilo)
         ivProducto    = findViewById(R.id.ivProducto)
         layoutPlaceholder = findViewById(R.id.layoutPlaceholder)
         btnQuitarImagen   = findViewById(R.id.btnQuitarImagen)
+
+        switchPorPeso.setOnCheckedChangeListener { _, marcado ->
+            aplicarModoPeso(marcado)
+        }
 
         cargarCategorias()
 
@@ -172,6 +186,15 @@ class AgregarProductoActivity : AppCompatActivity() {
         etCantidad.setText(producto.cantidad.toString())
         etStockMinimo.setText(producto.stockMinimo.toString())
         etCodigoBarras.setText(producto.codigoBarras ?: "")
+        switchPorPeso.isChecked = producto.vendePorPeso
+        if (producto.precioKilo > 0) etPrecioKilo.setText(producto.precioKilo.toString())
+        if (producto.precioCompraKilo > 0) etPrecioCompraKilo.setText(producto.precioCompraKilo.toString())
+        aplicarModoPeso(producto.vendePorPeso)
+    }
+
+    private fun aplicarModoPeso(marcado: Boolean) {
+        layoutPeso.visibility = if (marcado) View.VISIBLE else View.GONE
+        tvPesoAyuda.visibility = if (marcado) View.VISIBLE else View.GONE
     }
 
     private fun verificarPermisoYAbrirCamara() {
@@ -243,8 +266,11 @@ class AgregarProductoActivity : AppCompatActivity() {
         val cantidadStr     = etCantidad.text.toString().trim()
         val stockMinimoStr  = etStockMinimo.text.toString().trim()
         val codigoBarras    = etCodigoBarras.text.toString().trim().ifEmpty { null }
+        val vendePorPeso    = switchPorPeso.isChecked
+        val precioKiloStr   = etPrecioKilo.text.toString().trim()
+        val precioCompraKiloStr = etPrecioCompraKilo.text.toString().trim()
 
-        // Validaciones
+        // Validaciones generales
         if (nombre.isEmpty()) {
             etNombre.error = "El nombre es obligatorio"
             return
@@ -254,27 +280,40 @@ class AgregarProductoActivity : AppCompatActivity() {
             return
         }
         tilCategoria.error = null
-        if (precioCompraStr.isEmpty()) {
-            etPrecioCompra.error = "El precio de compra es obligatorio"
-            return
-        }
-        if (precioStr.isEmpty()) {
-            etPrecio.error = "El precio de venta es obligatorio"
-            return
-        }
-        if (cantidadStr.isEmpty()) {
-            etCantidad.error = "La cantidad es obligatoria"
-            return
-        }
-        if (stockMinimoStr.isEmpty()) {
-            etStockMinimo.error = "El stock mínimo es obligatorio"
-            return
+
+        if (vendePorPeso) {
+            // Producto por peso: el precio por kilo es obligatorio; los datos de
+            // pieza son opcionales (si se dejan vacíos, no se vende por pieza).
+            if (precioKiloStr.isEmpty() || (precioKiloStr.toDoubleOrNull() ?: 0.0) <= 0.0) {
+                etPrecioKilo.error = "Indica el precio por kilo"
+                return
+            }
+        } else {
+            // Producto normal por pieza: todos los campos de pieza son obligatorios.
+            if (precioCompraStr.isEmpty()) {
+                etPrecioCompra.error = "El precio de compra es obligatorio"
+                return
+            }
+            if (precioStr.isEmpty()) {
+                etPrecio.error = "El precio de venta es obligatorio"
+                return
+            }
+            if (cantidadStr.isEmpty()) {
+                etCantidad.error = "La cantidad es obligatoria"
+                return
+            }
+            if (stockMinimoStr.isEmpty()) {
+                etStockMinimo.error = "El stock mínimo es obligatorio"
+                return
+            }
         }
 
-        val precioCompra = precioCompraStr.toDouble()
-        val precio       = precioStr.toDouble()
-        val cantidad     = cantidadStr.toInt()
-        val stockMinimo  = stockMinimoStr.toInt()
+        val precioCompra     = precioCompraStr.toDoubleOrNull() ?: 0.0
+        val precio           = precioStr.toDoubleOrNull() ?: 0.0
+        val cantidad         = cantidadStr.toIntOrNull() ?: 0
+        val stockMinimo      = stockMinimoStr.toIntOrNull() ?: 0
+        val precioKilo       = if (vendePorPeso) precioKiloStr.toDoubleOrNull() ?: 0.0 else 0.0
+        val precioCompraKilo = if (vendePorPeso) precioCompraKiloStr.toDoubleOrNull() ?: 0.0 else 0.0
 
         if (productoExistente != null) {
             val actualizado = productoExistente!!.copy(
@@ -285,7 +324,10 @@ class AgregarProductoActivity : AppCompatActivity() {
                 cantidad = cantidad,
                 stockMinimo = stockMinimo,
                 imagenUri = imagenUri,
-                codigoBarras = codigoBarras
+                codigoBarras = codigoBarras,
+                vendePorPeso = vendePorPeso,
+                precioKilo = precioKilo,
+                precioCompraKilo = precioCompraKilo
             )
             db.productoDao().actualizar(actualizado)
             Toast.makeText(this, "Producto actualizado", Toast.LENGTH_SHORT).show()
@@ -298,7 +340,10 @@ class AgregarProductoActivity : AppCompatActivity() {
                 cantidad = cantidad,
                 stockMinimo = stockMinimo,
                 imagenUri = imagenUri,
-                codigoBarras = codigoBarras
+                codigoBarras = codigoBarras,
+                vendePorPeso = vendePorPeso,
+                precioKilo = precioKilo,
+                precioCompraKilo = precioCompraKilo
             )
             db.productoDao().insertar(nuevo)
             Toast.makeText(this, "Producto guardado", Toast.LENGTH_SHORT).show()
