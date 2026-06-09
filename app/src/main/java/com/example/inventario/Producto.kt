@@ -15,5 +15,15 @@ data class Producto(
     val stockMinimo: Int,
     val imagenUri: String? = null,
     val codigoBarras: String? = null,
-    val favorito: Boolean = false
-)
+    val favorito: Boolean = false,
+    // --- Frutas y verduras (venta por peso) ---
+    // Si es true, el producto también se puede vender por kilo (¼, ½, 1 kg...).
+    // La venta por peso NO descuenta stock (solo se usa el precio por kilo).
+    val vendePorPeso: Boolean = false,
+    val precioKilo: Double = 0.0,
+    val precioCompraKilo: Double = 0.0
+) {
+    /** El producto se puede vender por pieza (lleva control de stock). */
+    val seVendePorPieza: Boolean
+        get() = !vendePorPeso || precio > 0.0
+}

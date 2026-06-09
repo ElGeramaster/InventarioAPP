@@ -26,7 +26,7 @@ class CarritoItemAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
         holder.tvNombre.text = item.producto.nombre
-        holder.tvCantidad.text = "Cant: ${item.cantidad}"
+        holder.tvCantidad.text = item.textoCantidad
         holder.itemView.setOnClickListener { onClick(item) }
     }
 

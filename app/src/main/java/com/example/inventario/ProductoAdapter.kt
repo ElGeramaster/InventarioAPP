@@ -21,6 +21,7 @@ class ProductoAdapter(
         val tvCategoria: TextView = itemView.findViewById(R.id.tvCategoria)
         val tvPrecio: TextView = itemView.findViewById(R.id.tvPrecio)
         val tvCantidad: TextView = itemView.findViewById(R.id.tvCantidad)
+        val tvUnidades: TextView = itemView.findViewById(R.id.tvUnidades)
         val viewIndicador: View = itemView.findViewById(R.id.viewIndicador)
         val ivThumbnail: ImageView = itemView.findViewById(R.id.ivThumbnail)
         val cardThumbnail: CardView = itemView.findViewById(R.id.cardThumbnail)
@@ -38,8 +39,18 @@ class ProductoAdapter(
 
         holder.tvNombre.text = producto.nombre
         holder.tvCategoria.text = producto.categoria
-        holder.tvPrecio.text = "$${"%.2f".format(producto.precio)}"
-        holder.tvCantidad.text = producto.cantidad.toString()
+        if (producto.vendePorPeso) {
+            holder.tvPrecio.text = "$${"%.2f".format(producto.precioKilo)} /kg"
+        } else {
+            holder.tvPrecio.text = "$${"%.2f".format(producto.precio)}"
+        }
+        if (producto.vendePorPeso && producto.precio <= 0) {
+            holder.tvCantidad.text = "—"
+            holder.tvUnidades.text = "por kg"
+        } else {
+            holder.tvCantidad.text = producto.cantidad.toString()
+            holder.tvUnidades.text = "unidades"
+        }
 
         // Mostrar thumbnail si hay imagen
         if (!producto.imagenUri.isNullOrEmpty()) {
@@ -54,7 +65,8 @@ class ProductoAdapter(
             holder.cardThumbnail.visibility = View.GONE
         }
 
-        if (producto.cantidad <= producto.stockMinimo) {
+        val esStockBajo = producto.seVendePorPieza && producto.cantidad <= producto.stockMinimo
+        if (esStockBajo) {
             holder.viewIndicador.setBackgroundColor(Color.parseColor("#E53935"))
             holder.tvCantidad.setTextColor(Color.parseColor("#C62828"))
         } else {
