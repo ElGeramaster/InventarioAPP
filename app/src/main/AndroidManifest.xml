@@ -21,6 +21,9 @@
         <activity android:name=".ReportesActivity"/>
         <activity android:name=".HistorialVentas.HistorialVentasActivity"/>
         <activity
+            android:name=".TiendaGUI.ContinuousScanActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".TiendaGUI.TiendaActivity"
             android:exported="true">
             <intent-filter>
