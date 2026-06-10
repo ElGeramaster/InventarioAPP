@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class ReportesActivity : AppCompatActivity() {
+class ReportesActivity : BaseActivity() {
 
     private lateinit var tvTotalProductos: TextView
     private lateinit var tvValorTotal: TextView

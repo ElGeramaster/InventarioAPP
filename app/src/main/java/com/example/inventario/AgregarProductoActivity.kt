@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AgregarProductoActivity : AppCompatActivity() {
+class AgregarProductoActivity : BaseActivity() {
 
     private lateinit var etNombre: TextInputEditText
     private lateinit var acvCategoria: AutoCompleteTextView

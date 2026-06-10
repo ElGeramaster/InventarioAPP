@@ -23,7 +23,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.inventario.AppDatabase
+import com.example.inventario.BaseActivity
 import com.example.inventario.HistorialVentas.HistorialVentasActivity
+import com.example.inventario.LogoManager
 import com.example.inventario.MainActivity
 import com.example.inventario.NotificationHelper
 import com.example.inventario.Producto
@@ -32,7 +34,7 @@ import com.example.inventario.ReportesActivity
 import com.example.inventario.Venta
 import com.example.inventario.VentaDetalle
 
-class TiendaActivity : AppCompatActivity() {
+class TiendaActivity : BaseActivity() {
 
     private lateinit var db: AppDatabase
     private lateinit var drawerLayout: DrawerLayout
@@ -47,6 +49,8 @@ class TiendaActivity : AppCompatActivity() {
     private lateinit var tvSinProductos: TextView
     private lateinit var tvCarritoVacio: TextView
     private lateinit var fabEscanear: com.google.android.material.floatingactionbutton.FloatingActionButton
+    private lateinit var dotMenuStock: View
+    private lateinit var ivLogoTienda: ImageView
 
     private lateinit var categoriaAdapter: CategoriaTiendaAdapter
     private lateinit var productoAdapter: ProductoTiendaAdapter
@@ -65,6 +69,19 @@ class TiendaActivity : AppCompatActivity() {
             val codigos = result.data?.getStringArrayListExtra(ContinuousScanActivity.EXTRA_CODIGOS)
             if (!codigos.isNullOrEmpty()) {
                 procesarCodigosEscaneados(codigos)
+            }
+        }
+    }
+
+    private val seleccionarLogoLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            if (LogoManager.guardarDesdeUri(this, uri)) {
+                Toast.makeText(this, "Logo actualizado", Toast.LENGTH_SHORT).show()
+                mostrarLogoTienda()
+            } else {
+                Toast.makeText(this, "No se pudo guardar el logo", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -92,6 +109,8 @@ class TiendaActivity : AppCompatActivity() {
         tvSinProductos  = findViewById(R.id.tvSinProductos)
         tvCarritoVacio  = findViewById(R.id.tvCarritoVacio)
         fabEscanear     = findViewById(R.id.fabEscanear)
+        dotMenuStock    = findViewById(R.id.dotMenuStock)
+        ivLogoTienda    = findViewById(R.id.ivLogoTienda)
 
         configurarCategorias()
         configurarProductos()
@@ -116,6 +135,8 @@ class TiendaActivity : AppCompatActivity() {
         super.onResume()
         recargarCategorias()
         filtrarProductos()
+        actualizarIndicadorStock()
+        mostrarLogoTienda()
     }
 
     @Deprecated("Deprecated in Java")
@@ -179,8 +200,58 @@ class TiendaActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.menuAjustes).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
-            Toast.makeText(this, "Ajustes - Próximamente", Toast.LENGTH_SHORT).show()
+            abrirAjustes()
         }
+    }
+
+    /**
+     * Muestra un punto rojo en el botón de menú y en "Mi mercancía y reportes"
+     * cuando hay productos con stock bajo o agotado.
+     */
+    private fun actualizarIndicadorStock() {
+        val hayStockBajo = db.productoDao().obtenerStockBajo().isNotEmpty()
+
+        dotMenuStock.visibility = if (hayStockBajo) View.VISIBLE else View.GONE
+
+        val menuReportes = findViewById<TextView>(R.id.menuReportes)
+        val icono = if (hayStockBajo) R.drawable.ic_dot_alerta else 0
+        menuReportes.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, icono, 0)
+        menuReportes.compoundDrawablePadding = 12
+    }
+
+    private fun mostrarLogoTienda() {
+        val path = LogoManager.obtenerPath(this)
+        if (path != null) {
+            val bitmap = BitmapFactory.decodeFile(path)
+            if (bitmap != null) {
+                ivLogoTienda.setImageBitmap(bitmap)
+                ivLogoTienda.visibility = View.VISIBLE
+                return
+            }
+        }
+        ivLogoTienda.visibility = View.GONE
+    }
+
+    private fun abrirAjustes() {
+        val opciones = if (LogoManager.hayLogo(this)) {
+            arrayOf("Cambiar logo (galería)", "Quitar logo")
+        } else {
+            arrayOf("Poner logo (galería)")
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Ajustes")
+            .setItems(opciones) { _, which ->
+                when {
+                    which == 0 -> seleccionarLogoLauncher.launch("image/*")
+                    else -> {
+                        LogoManager.quitar(this)
+                        mostrarLogoTienda()
+                        Toast.makeText(this, "Logo quitado", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun configurarCategorias() {
@@ -630,6 +701,7 @@ class TiendaActivity : AppCompatActivity() {
                 carrito.clear()
                 actualizarCarritoUI()
                 filtrarProductos()
+                actualizarIndicadorStock()
             }
             .setNegativeButton("Cancelar", null)
             .show()

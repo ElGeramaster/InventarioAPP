@@ -26,14 +26,40 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <ImageButton
-                android:id="@+id/btnMenuHamburger"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_menu_hamburger"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Abrir menú"
-                android:scaleType="centerInside"/>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/btnMenuHamburger"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_menu_hamburger"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Abrir menú"
+                    android:scaleType="centerInside"/>
+
+                <!-- Punto rojo de aviso de stock bajo -->
+                <View
+                    android:id="@+id/dotMenuStock"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/ic_red_dot"
+                    android:visibility="gone"/>
+
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/ivLogoTienda"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="6dp"
+                android:scaleType="fitCenter"
+                android:visibility="gone"
+                android:contentDescription="Logo de la tienda"/>
 
             <TextView
                 android:layout_width="0dp"

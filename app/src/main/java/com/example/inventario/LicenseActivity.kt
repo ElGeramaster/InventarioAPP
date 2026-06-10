@@ -1,9 +1,13 @@
 package com.example.inventario
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.inventario.TiendaGUI.TiendaActivity
@@ -14,7 +18,7 @@ import com.google.android.material.textfield.TextInputLayout
  * Pantalla de activación. Es la pantalla de inicio de la app.
  * Si la app ya está activada (y no ha vencido), pasa directo a la tienda.
  */
-class LicenseActivity : AppCompatActivity() {
+class LicenseActivity : BaseActivity() {
 
     private lateinit var tilCodigo: TextInputLayout
     private lateinit var etCodigo: TextInputEditText
@@ -30,6 +34,8 @@ class LicenseActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_license)
+
+        mostrarLogo()
 
         tilCodigo = findViewById(R.id.tilCodigoActivacion)
         etCodigo = findViewById(R.id.etCodigoActivacion)
@@ -61,6 +67,16 @@ class LicenseActivity : AppCompatActivity() {
             tilCodigo.error = "Código incorrecto"
             Toast.makeText(this, "El código no es válido", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun mostrarLogo() {
+        val path = LogoManager.obtenerPath(this) ?: return
+        val bitmap = BitmapFactory.decodeFile(path) ?: return
+        val ivLogo = findViewById<ImageView>(R.id.ivLogoActivacion)
+        val tvCandado = findViewById<TextView>(R.id.tvCandado)
+        ivLogo.setImageBitmap(bitmap)
+        ivLogo.visibility = View.VISIBLE
+        tvCandado.visibility = View.GONE
     }
 
     private fun irATienda() {
