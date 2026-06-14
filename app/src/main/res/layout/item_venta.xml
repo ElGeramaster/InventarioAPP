@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="30 Abr 2026, 14:30"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="#212121"/>
 
@@ -35,9 +35,9 @@
                 android:id="@+id/tvArticulosVenta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="3dp"
                 android:text="3 artículos"
-                android:textSize="11sp"
+                android:textSize="13sp"
                 android:textColor="#757575"/>
 
         </LinearLayout>
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="$0.00"
-                android:textSize="15sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#2E7D32"/>
 
@@ -61,9 +61,9 @@
                 android:id="@+id/tvGananciaVenta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="3dp"
                 android:text="Gan: $0.00"
-                android:textSize="11sp"
+                android:textSize="13sp"
                 android:textColor="#E65100"/>
 
         </LinearLayout>

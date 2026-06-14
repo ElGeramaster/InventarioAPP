@@ -143,7 +143,9 @@ class AgregarProductoActivity : BaseActivity() {
             options.setPrompt("Escanea el código de barras del producto")
             options.setCameraId(0)
             options.setBeepEnabled(true)
-            options.setOrientationLocked(true)
+            // Abrimos el escáner en vertical en lugar de horizontal.
+            options.setOrientationLocked(false)
+            options.setCaptureActivity(PortraitCaptureActivity::class.java)
             escanearCodigoLauncher.launch(options)
         }
 
