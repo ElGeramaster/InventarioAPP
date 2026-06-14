@@ -24,13 +24,13 @@ class BarChartView @JvmOverloads constructor(
 
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#757575")
-        textSize = 28f
+        textSize = 34f
         textAlign = Paint.Align.CENTER
     }
 
     private val valuePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#2E7D32")
-        textSize = 26f
+        textSize = 34f
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
     }
@@ -51,8 +51,8 @@ class BarChartView @JvmOverloads constructor(
 
         val paddingLeft = 16f
         val paddingRight = 16f
-        val paddingTop = 40f
-        val paddingBottom = 48f
+        val paddingTop = 50f
+        val paddingBottom = 58f
 
         val chartWidth = width - paddingLeft - paddingRight
         val chartHeight = height - paddingTop - paddingBottom
