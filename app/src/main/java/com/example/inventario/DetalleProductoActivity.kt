@@ -12,7 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 
-class DetalleProductoActivity : AppCompatActivity() {
+class DetalleProductoActivity : BaseActivity() {
 
     private lateinit var tvNombre: TextView
     private lateinit var tvCategoria: TextView

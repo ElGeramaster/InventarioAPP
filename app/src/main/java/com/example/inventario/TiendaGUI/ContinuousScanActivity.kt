@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.inventario.AppDatabase
+import com.example.inventario.BaseActivity
 import com.example.inventario.Producto
 import com.example.inventario.R
 import com.google.android.material.button.MaterialButton
@@ -33,7 +34,7 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView
  *  - "Sí, tengo más productos": se suma 1 al inventario para poder venderlo
  *    y el escaneo sí se cuenta.
  */
-class ContinuousScanActivity : AppCompatActivity() {
+class ContinuousScanActivity : BaseActivity() {
 
     private lateinit var barcodeView: DecoratedBarcodeView
     private lateinit var tvContador: TextView
@@ -69,8 +70,14 @@ class ContinuousScanActivity : AppCompatActivity() {
             ultimoTiempo = ahora
 
             val producto = db.productoDao().buscarPorCodigoBarras(texto)
+            if (producto == null) {
+                // El código no corresponde a ningún producto registrado.
+                mostrarNoReconocido()
+                return
+            }
+
             // Solo controlamos stock de productos que se venden por pieza.
-            if (producto != null && !producto.vendePorPeso) {
+            if (!producto.vendePorPeso) {
                 val yaEscaneados = conteoPorProducto[producto.id] ?: 0
                 if (yaEscaneados >= producto.cantidad) {
                     mostrarDialogoSinStock(producto, texto)
@@ -121,6 +128,14 @@ class ContinuousScanActivity : AppCompatActivity() {
         codigosEscaneados.add(texto)
         beepManager.playBeepSoundAndVibrate()
         actualizarContador()
+    }
+
+    private fun mostrarNoReconocido() {
+        Toast.makeText(
+            this,
+            "Producto no reconocido. Revisa que tenga un código de barras registrado.",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun mostrarDialogoSinStock(producto: Producto, texto: String) {

@@ -12,12 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.inventario.AppDatabase
+import com.example.inventario.BaseActivity
 import com.example.inventario.ProductoVendidoResumen
 import com.example.inventario.R
 import com.example.inventario.Venta
 import java.util.*
 
-class HistorialVentasActivity : AppCompatActivity() {
+class HistorialVentasActivity : BaseActivity() {
 
     private lateinit var db: AppDatabase
     private lateinit var ventaAdapter: VentaAdapter
