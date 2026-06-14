@@ -20,6 +20,8 @@ import com.google.android.material.textfield.TextInputLayout
  */
 class LicenseActivity : BaseActivity() {
 
+    private lateinit var tilUsuario: TextInputLayout
+    private lateinit var etUsuario: TextInputEditText
     private lateinit var tilCodigo: TextInputLayout
     private lateinit var etCodigo: TextInputEditText
 
@@ -37,6 +39,8 @@ class LicenseActivity : BaseActivity() {
 
         mostrarLogo()
 
+        tilUsuario = findViewById(R.id.tilUsuarioActivacion)
+        etUsuario = findViewById(R.id.etUsuarioActivacion)
         tilCodigo = findViewById(R.id.tilCodigoActivacion)
         etCodigo = findViewById(R.id.etCodigoActivacion)
 
@@ -53,19 +57,42 @@ class LicenseActivity : BaseActivity() {
     }
 
     private fun validar() {
+        val usuario = etUsuario.text?.toString()?.trim().orEmpty()
         val codigo = etCodigo.text?.toString()?.trim().orEmpty()
+
+        tilUsuario.error = null
+        tilCodigo.error = null
+
+        if (usuario.isEmpty()) {
+            tilUsuario.error = "Ingresa tu usuario"
+            return
+        }
         if (codigo.isEmpty()) {
-            tilCodigo.error = "Ingresa el código de activación"
+            tilCodigo.error = "Ingresa tu contraseña"
             return
         }
 
-        if (LicenseManager.activar(this, codigo)) {
-            tilCodigo.error = null
-            Toast.makeText(this, "Activación correcta. ¡Bienvenido!", Toast.LENGTH_SHORT).show()
-            irATienda()
-        } else {
-            tilCodigo.error = "Código incorrecto"
-            Toast.makeText(this, "El código no es válido", Toast.LENGTH_SHORT).show()
+        when (LicenseManager.activar(this, usuario, codigo)) {
+            LicenseManager.ResultadoActivacion.OK -> {
+                Toast.makeText(this, "Activación correcta. ¡Bienvenido!", Toast.LENGTH_SHORT).show()
+                irATienda()
+            }
+            LicenseManager.ResultadoActivacion.USUARIO_INCORRECTO -> {
+                tilUsuario.error = "Usuario incorrecto"
+                Toast.makeText(this, "El usuario no es válido", Toast.LENGTH_SHORT).show()
+            }
+            LicenseManager.ResultadoActivacion.CLAVE_INCORRECTA -> {
+                tilCodigo.error = "Contraseña incorrecta"
+                Toast.makeText(this, "La contraseña no es válida", Toast.LENGTH_SHORT).show()
+            }
+            LicenseManager.ResultadoActivacion.CLAVE_REPETIDA -> {
+                tilCodigo.error = "Esa clave ya se usó. Usa una distinta a la anterior."
+                Toast.makeText(
+                    this,
+                    "Esa clave ya se usó. Debes usar una clave distinta a la anterior.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 

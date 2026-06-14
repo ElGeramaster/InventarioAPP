@@ -42,27 +42,51 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:text="Ingresa el código de seguridad para empezar a usar la app. El código se vuelve a pedir cada 30 días y en cada actualización."
+            android:text="Ingresa tu usuario y tu contraseña para empezar a usar la app. La contraseña se vuelve a pedir cada 30 días y en cada actualización, y debe ser distinta a la anterior."
             android:textColor="#757575"
             android:textSize="14sp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilUsuarioActivacion"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:hint="Usuario"
+            android:textColorHint="#757575"
+            app:boxStrokeColor="#43A047"
+            app:hintTextColor="#43A047">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etUsuarioActivacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="textNoSuggestions"
+                android:maxLines="1"
+                android:textColor="#212121" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilCodigoActivacion"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
-            android:hint="Código de activación"
+            android:layout_marginTop="14dp"
+            android:hint="Contraseña"
             android:textColorHint="#757575"
             app:boxStrokeColor="#43A047"
-            app:hintTextColor="#43A047">
+            app:hintTextColor="#43A047"
+            app:endIconMode="password_toggle"
+            app:endIconTint="#43A047">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etCodigoActivacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
-                android:inputType="textNoSuggestions"
+                android:inputType="textPassword"
                 android:maxLines="1"
                 android:textColor="#212121" />
 
