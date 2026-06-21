@@ -4,48 +4,39 @@ import android.content.Context
 import androidx.core.content.pm.PackageInfoCompat
 import java.security.MessageDigest
 
-/**
- * Control de activación de la app por código de seguridad.
- *
- * Funcionamiento:
- *  - En la primera apertura se pide un código de activación.
- *  - El código vuelve a pedirse cuando pasan [DIAS_VIGENCIA] días (30 por defecto).
- *  - El código también vuelve a pedirse en cada actualización de la app
- *    (cuando cambia el versionCode), para que las claves viejas dejen de servir.
- *
- * CÓMO CAMBIAR LA CLAVE EN CADA ACTUALIZACIÓN:
- *  1. Sube el `versionCode` en app/build.gradle.kts (1 -> 2 -> 3 ...).
- *  2. Reemplaza/añade el hash en [CODIGOS_VALIDOS] por el de tu nueva clave.
- *     El hash es el SHA-256 (en minúsculas) del código en texto.
- *     Por ejemplo, con la terminal:
- *         printf '%s' 'MI-NUEVA-CLAVE' | sha256sum
- *     o pídele a tu asistente que genere el hash de la clave que quieras.
- *
- * Nota: aquí se guardan solo los hashes, nunca el texto de la clave, para que
- * no aparezca a simple vista dentro del APK.
- */
 object LicenseManager {
 
     private const val PREFS = "licencia_prefs"
     private const val KEY_FECHA_ACTIVACION = "fecha_activacion"
     private const val KEY_VERSION_ACTIVADA = "version_activada"
+    private const val KEY_CLAVES_USADAS = "claves_usadas"
+    private const val KEY_ULTIMA_CLAVE = "ultima_clave"
 
-    /** Días que dura una activación antes de volver a pedir el código. */
-    private const val DIAS_VIGENCIA = 30L
+    /** Días que dura una activación antes de volver a pedir usuario y clave. */
+    private const val DIAS_VIGENCIA = 30 L
     private const val MS_VIGENCIA = DIAS_VIGENCIA * 24L * 60L * 60L * 1000L
 
-    /**
-     * Hashes SHA-256 (minúsculas) de los códigos de activación válidos.
-     * Cambia estos valores en cada actualización para invalidar las claves anteriores.
-     *
-     * Claves de ejemplo incluidas por defecto:
-     *   - "INVENTARIO2026"
-     *   - "GERAM-2026"
-     */
+
+    private const val USUARIO_VALIDO =
+        "d3199ed7bff4334b7226070ea9b915ab477c2d04ebac4c44f922d86aa379e99d" // MiNegocioApp
+
+    
     private val CODIGOS_VALIDOS = setOf(
-        "c168b468c4c066b30fda7608b85a058dbff55a8b8b20b061e1c289b31f75dd84", // INVENTARIO2026
-        "a4fb7ab9a2fccf326cea535b937b4b8ac22039d7fe47db8b11db1d9401c54818"  // GERAM-2026
+        "83d12fd61df6945d5db2288f24f4066f9efd6f63ee9746b001d95f239c554dbb", // Mi_MERCANCIA06012
+        "878205bfe7ad2d1e5adf7b4ad6451336f57947e37fc6c181c4c841b8ea315bba", // PR0DUCT0S_1207?
+        "d9b0bc330bb18b56b9eeeaafef4be6ee958115d98821d895479f7975696558b6", // ger12345?
+        "d170488fd82ae842d1f6431def71e9d1bfd4dffeef3f9271cf9f6e2e4e8fb55a", // T1EnD1TA_DK130W*
+        "4a4b1585ec0e93bbfabaac530a88b7c5e4d4142a6726776d2c4e9950d741b445", // F1C2G3D4R5?
+        "0f7ae578a666b74f6aafda9cf9e1013a613388d9804d30d816631154e2a3be8b"  // INVENTARIO-F6
     )
+
+    /** Resultado de un intento de activación, para mostrar el mensaje correcto. */
+    enum class ResultadoActivacion {
+        OK,
+        USUARIO_INCORRECTO,
+        CLAVE_INCORRECTA,
+        CLAVE_REPETIDA
+    }
 
     /** Devuelve true si hay que mostrar la pantalla de activación. */
     fun requiereActivacion(context: Context): Boolean {
@@ -65,18 +56,45 @@ object LicenseManager {
     }
 
     /**
-     * Valida el [codigo] introducido. Si es correcto guarda la activación y
-     * devuelve true; si no, devuelve false.
+     * Valida el [usuario] y la [contrasena] introducidos.
+     *  - El usuario debe coincidir con [USUARIO_VALIDO].
+     *  - La contraseña debe ser una de [CODIGOS_VALIDOS] y NO haberse usado ya
+     *    en este ciclo ni ser igual a la última usada (rotación sin repetir).
+     * Si todo es correcto guarda la activación y devuelve [ResultadoActivacion.OK].
      */
-    fun activar(context: Context, codigo: String): Boolean {
-        val hash = sha256(codigo.trim())
-        if (hash !in CODIGOS_VALIDOS) return false
+    fun activar(context: Context, usuario: String, contrasena: String): ResultadoActivacion {
+        if (sha256(usuario.trim()) != USUARIO_VALIDO) {
+            return ResultadoActivacion.USUARIO_INCORRECTO
+        }
 
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+        val hashClave = sha256(contrasena.trim())
+        if (hashClave !in CODIGOS_VALIDOS) {
+            return ResultadoActivacion.CLAVE_INCORRECTA
+        }
+
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        // Copia mutable: nunca se debe modificar el set que devuelve getStringSet.
+        var usadas = prefs.getStringSet(KEY_CLAVES_USADAS, emptySet())?.toMutableSet() ?: mutableSetOf()
+        val ultima = prefs.getString(KEY_ULTIMA_CLAVE, null)
+
+        // Si ya se usaron las 6 claves, empieza un ciclo nuevo.
+        if (usadas.containsAll(CODIGOS_VALIDOS)) {
+            usadas = mutableSetOf()
+        }
+
+        // No se puede repetir la clave anterior ni una ya usada en este ciclo.
+        if (hashClave == ultima || hashClave in usadas) {
+            return ResultadoActivacion.CLAVE_REPETIDA
+        }
+
+        usadas.add(hashClave)
+        prefs.edit()
             .putLong(KEY_FECHA_ACTIVACION, System.currentTimeMillis())
             .putLong(KEY_VERSION_ACTIVADA, versionActual(context))
+            .putStringSet(KEY_CLAVES_USADAS, usadas)
+            .putString(KEY_ULTIMA_CLAVE, hashClave)
             .apply()
-        return true
+        return ResultadoActivacion.OK
     }
 
     /** Días que faltan para que venza la activación actual (0 si ya venció). */
