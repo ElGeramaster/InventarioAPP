@@ -1,8 +1,11 @@
 package com.example.inventario.TiendaGUI
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
@@ -61,6 +65,14 @@ class TiendaActivity : BaseActivity() {
 
     private var categoriaSeleccionada: String = CATEGORIA_TODOS
     private var busquedaActual: String = ""
+
+    private val permisoNotificacionesLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { concedido ->
+        if (concedido) {
+            NotificationHelper.verificarYNotificarPagoMensual(this)
+        }
+    }
 
     private val escanearCodigoLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -128,6 +140,25 @@ class TiendaActivity : BaseActivity() {
 
         findViewById<ImageButton>(R.id.btnMenuHamburger).setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        configurarAvisoPago()
+    }
+
+    /**
+     * Prepara el aviso del pago mensual: en Android 13+ pide el permiso de
+     * notificaciones (si no se ha concedido) y, en cuanto se concede, muestra
+     * el aviso. Si ya hay permiso, lo verifica de inmediato.
+     */
+    private fun configurarAvisoPago() {
+        NotificationHelper.crearCanalPago(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            permisoNotificacionesLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            NotificationHelper.verificarYNotificarPagoMensual(this)
         }
     }
 
