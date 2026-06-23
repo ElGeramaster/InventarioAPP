@@ -20,8 +20,6 @@ import com.google.android.material.textfield.TextInputLayout
  */
 class LicenseActivity : BaseActivity() {
 
-    private lateinit var tilUsuario: TextInputLayout
-    private lateinit var etUsuario: TextInputEditText
     private lateinit var tilCodigo: TextInputLayout
     private lateinit var etCodigo: TextInputEditText
 
@@ -39,10 +37,11 @@ class LicenseActivity : BaseActivity() {
 
         mostrarLogo()
 
-        tilUsuario = findViewById(R.id.tilUsuarioActivacion)
-        etUsuario = findViewById(R.id.etUsuarioActivacion)
         tilCodigo = findViewById(R.id.tilCodigoActivacion)
         etCodigo = findViewById(R.id.etCodigoActivacion)
+
+        // El usuario ya no se pide, se oculta en el layout.
+        findViewById<View>(R.id.tilUsuarioActivacion).visibility = View.GONE
 
         etCodigo.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -57,29 +56,19 @@ class LicenseActivity : BaseActivity() {
     }
 
     private fun validar() {
-        val usuario = etUsuario.text?.toString()?.trim().orEmpty()
         val codigo = etCodigo.text?.toString()?.trim().orEmpty()
 
-        tilUsuario.error = null
         tilCodigo.error = null
 
-        if (usuario.isEmpty()) {
-            tilUsuario.error = "Ingresa tu usuario"
-            return
-        }
         if (codigo.isEmpty()) {
             tilCodigo.error = "Ingresa tu contraseña"
             return
         }
 
-        when (LicenseManager.activar(this, usuario, codigo)) {
+        when (LicenseManager.activar(this, codigo)) {
             LicenseManager.ResultadoActivacion.OK -> {
                 Toast.makeText(this, "Activación correcta. ¡Bienvenido!", Toast.LENGTH_SHORT).show()
                 irATienda()
-            }
-            LicenseManager.ResultadoActivacion.USUARIO_INCORRECTO -> {
-                tilUsuario.error = "Usuario incorrecto"
-                Toast.makeText(this, "El usuario no es válido", Toast.LENGTH_SHORT).show()
             }
             LicenseManager.ResultadoActivacion.CLAVE_INCORRECTA -> {
                 tilCodigo.error = "Contraseña incorrecta"

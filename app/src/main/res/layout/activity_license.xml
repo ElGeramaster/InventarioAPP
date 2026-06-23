@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:text="Ingresa tu usuario y tu contraseña para empezar a usar la app. La contraseña se vuelve a pedir cada 30 días y en cada actualización, y debe ser distinta a la anterior."
+            android:text="Ingresa tu clave de Acceso"
             android:textColor="#757575"
             android:textSize="14sp" />
 
@@ -53,6 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="26dp"
             android:hint="Usuario"
+            android:visibility="gone"
             android:textColorHint="#757575"
             app:boxStrokeColor="#43A047"
             app:hintTextColor="#43A047">

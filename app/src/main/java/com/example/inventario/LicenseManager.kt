@@ -8,13 +8,13 @@ object LicenseManager {
 
     private const val PREFS = "licencia_prefs"
     private const val KEY_FECHA_ACTIVACION = "fecha_activacion"
-    private const val KEY_VERSION_ACTIVADA = "version_activada"
+    private const val KEY_VERSION_ACTIVADA = "version_ activada"
     private const val KEY_CLAVES_USADAS = "claves_usadas"
     private const val KEY_ULTIMA_CLAVE = "ultima_clave"
 
-    /** Días que dura una activación antes de volver a pedir usuario y clave. */
-    private const val DIAS_VIGENCIA = 30 L
-    private const val MS_VIGENCIA = DIAS_VIGENCIA * 24L * 60L * 60L * 1000L
+    /** Días que dura una activación antes de volver a pedir la clave. */
+    private const val DIAS_VIGENCIA = 30L
+    private const val MS_VIGENCIA = 30L * 24L * 60L * 60L * 1000L
 
 
     private const val USUARIO_VALIDO =
@@ -33,7 +33,6 @@ object LicenseManager {
     /** Resultado de un intento de activación, para mostrar el mensaje correcto. */
     enum class ResultadoActivacion {
         OK,
-        USUARIO_INCORRECTO,
         CLAVE_INCORRECTA,
         CLAVE_REPETIDA
     }
@@ -56,17 +55,12 @@ object LicenseManager {
     }
 
     /**
-     * Valida el [usuario] y la [contrasena] introducidos.
-     *  - El usuario debe coincidir con [USUARIO_VALIDO].
+     * Valida la [contrasena] introducida.
      *  - La contraseña debe ser una de [CODIGOS_VALIDOS] y NO haberse usado ya
      *    en este ciclo ni ser igual a la última usada (rotación sin repetir).
      * Si todo es correcto guarda la activación y devuelve [ResultadoActivacion.OK].
      */
-    fun activar(context: Context, usuario: String, contrasena: String): ResultadoActivacion {
-        if (sha256(usuario.trim()) != USUARIO_VALIDO) {
-            return ResultadoActivacion.USUARIO_INCORRECTO
-        }
-
+    fun activar(context: Context, contrasena: String): ResultadoActivacion {
         val hashClave = sha256(contrasena.trim())
         if (hashClave !in CODIGOS_VALIDOS) {
             return ResultadoActivacion.CLAVE_INCORRECTA

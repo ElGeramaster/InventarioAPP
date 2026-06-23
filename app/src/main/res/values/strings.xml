@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">inventario</string>
+    <string name="app_name">Mi Mercancía App</string>
     <string name="menu_abrir">Abrir menú</string>
     <string name="menu_titulo">MENÚ</string>
     <string name="menu_inventario">📦 Inventario</string>
