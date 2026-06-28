@@ -13,18 +13,21 @@
         android:background="#F5F5F5">
 
         <!-- Top bar -->
+
+        <!-- Header: categorías + buscador -->
         <LinearLayout
             android:id="@+id/layoutTopBar"
             android:layout_width="0dp"
             android:layout_height="56dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:background="#43A047"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -34,10 +37,10 @@
                     android:id="@+id/btnMenuHamburger"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_menu_hamburger"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Abrir menú"
-                    android:scaleType="centerInside"/>
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_menu_hamburger" />
 
                 <!-- Punto rojo de aviso de stock bajo -->
                 <View
@@ -48,7 +51,7 @@
                     android:layout_marginTop="6dp"
                     android:layout_marginEnd="6dp"
                     android:background="@drawable/ic_red_dot"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
             </FrameLayout>
 
@@ -57,23 +60,33 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="6dp"
+                android:contentDescription="Logo de la tienda"
                 android:scaleType="fitCenter"
-                android:visibility="gone"
-                android:contentDescription="Logo de la tienda"/>
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:text="TIENDA"
-                android:textSize="28sp"
-                android:textStyle="bold"
                 android:textColor="#FFFFFF"
-                android:layout_marginStart="8dp"/>
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:layout_weight="1"
+                android:text="\n\nVer.1.0"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp"
+                android:textStyle="normal" />
 
         </LinearLayout>
 
-        <!-- Header: categorías + buscador -->
         <LinearLayout
             android:id="@+id/layoutHeader"
             android:layout_width="0dp"
@@ -140,21 +153,24 @@
         </androidx.cardview.widget.CardView>
 
         <!-- Grid de productos -->
+
+        <!-- Mensaje cuando no hay productos -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvProductosTienda"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="4dp"
+            android:clipToPadding="false"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
             android:paddingBottom="4dp"
-            android:clipToPadding="false"
-            app:layout_constraintTop_toBottomOf="@id/cardBuscar"
             app:layout_constraintBottom_toTopOf="@id/layoutCarrito"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/cardBuscar"
+            app:layout_constraintVertical_bias="1.0" />
 
-        <!-- Mensaje cuando no hay productos -->
         <TextView
             android:id="@+id/tvSinProductos"
             android:layout_width="wrap_content"
@@ -369,7 +385,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="GerardoA."
+            android:text="GerardoA. - 9621350889"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#424242"
