@@ -110,6 +110,8 @@ class MainActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         cargarProductos()
+        findViewById<android.widget.Button>(R.id.btnIrTienda).text =
+            NombreTiendaManager.obtenerNombre(this)
     }
 
     private fun solicitarPermisoNotificaciones() {
