@@ -25,7 +25,7 @@
             android:id="@+id/tvCandado"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🔒"
+            android:text="🐍"
             android:textSize="56sp" />
 
         <TextView
@@ -42,7 +42,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:text="Ingresa tu clave de Acceso"
+            android:text="Hola! tu servicio a expirado el dia de hoy,\n
+para volver a reactivarlo contactar con el Vendedor al 9621350889\n
+Gracias."
             android:textColor="#757575"
             android:textSize="14sp" />
 

@@ -65,25 +65,17 @@
                 android:visibility="gone" />
 
             <TextView
+                android:id="@+id/tvNombreTienda"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="TIENDA"
+                android:text="Tienda"
                 android:textColor="#FFFFFF"
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="100dp"
-                android:layout_weight="1"
-                android:text="\n\nVer.1.0"
-                android:textColor="#FFFFFF"
-                android:textSize="10sp"
-                android:textStyle="normal" />
+
 
         </LinearLayout>
 

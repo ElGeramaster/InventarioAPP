@@ -8,10 +8,12 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -31,6 +33,7 @@ import com.example.inventario.BaseActivity
 import com.example.inventario.HistorialVentas.HistorialVentasActivity
 import com.example.inventario.LogoManager
 import com.example.inventario.MainActivity
+import com.example.inventario.NombreTiendaManager
 import com.example.inventario.NotificationHelper
 import com.example.inventario.Producto
 import com.example.inventario.R
@@ -55,6 +58,7 @@ class TiendaActivity : BaseActivity() {
     private lateinit var fabEscanear: com.google.android.material.floatingactionbutton.FloatingActionButton
     private lateinit var dotMenuStock: View
     private lateinit var ivLogoTienda: ImageView
+    private lateinit var tvNombreTienda: TextView
 
     private lateinit var categoriaAdapter: CategoriaTiendaAdapter
     private lateinit var productoAdapter: ProductoTiendaAdapter
@@ -123,6 +127,7 @@ class TiendaActivity : BaseActivity() {
         fabEscanear     = findViewById(R.id.fabEscanear)
         dotMenuStock    = findViewById(R.id.dotMenuStock)
         ivLogoTienda    = findViewById(R.id.ivLogoTienda)
+        tvNombreTienda  = findViewById(R.id.tvNombreTienda)
 
         configurarCategorias()
         configurarProductos()
@@ -168,6 +173,7 @@ class TiendaActivity : BaseActivity() {
         filtrarProductos()
         actualizarIndicadorStock()
         mostrarLogoTienda()
+        mostrarNombreTienda()
     }
 
     @Deprecated("Deprecated in Java")
@@ -264,17 +270,21 @@ class TiendaActivity : BaseActivity() {
     }
 
     private fun abrirAjustes() {
-        val opciones = if (LogoManager.hayLogo(this)) {
-            arrayOf("Cambiar logo (galería)", "Quitar logo")
+        val opciones = mutableListOf("Cambiar nombre de la tienda")
+        if (LogoManager.hayLogo(this)) {
+            opciones.add("Cambiar logo (galería)")
+            opciones.add("Quitar logo")
         } else {
-            arrayOf("Poner logo (galería)")
+            opciones.add("Poner logo (galería)")
         }
         AlertDialog.Builder(this)
             .setTitle("Ajustes")
-            .setItems(opciones) { _, which ->
-                when {
-                    which == 0 -> seleccionarLogoLauncher.launch("image/*")
-                    else -> {
+            .setItems(opciones.toTypedArray()) { _, which ->
+                when (opciones[which]) {
+                    "Cambiar nombre de la tienda" -> mostrarDialogoNombreTienda()
+                    "Poner logo (galería)", "Cambiar logo (galería)" ->
+                        seleccionarLogoLauncher.launch("image/*")
+                    "Quitar logo" -> {
                         LogoManager.quitar(this)
                         mostrarLogoTienda()
                         Toast.makeText(this, "Logo quitado", Toast.LENGTH_SHORT).show()
@@ -283,6 +293,35 @@ class TiendaActivity : BaseActivity() {
             }
             .setNegativeButton("Cancelar", null)
             .show()
+    }
+
+    /** Pide al usuario un nuevo texto para el nombre de la tienda y lo guarda. */
+    private fun mostrarDialogoNombreTienda() {
+        val input = EditText(this).apply {
+            setText(NombreTiendaManager.obtenerNombre(this@TiendaActivity))
+            setSelection(text.length)
+            hint = "Nombre de la tienda"
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
+        }
+        val margen = (20 * resources.displayMetrics.density).toInt()
+        val contenedor = FrameLayout(this).apply {
+            setPadding(margen, margen / 2, margen, 0)
+            addView(input)
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Nombre de la tienda")
+            .setView(contenedor)
+            .setPositiveButton("Guardar") { _, _ ->
+                NombreTiendaManager.guardarNombre(this, input.text.toString())
+                mostrarNombreTienda()
+                Toast.makeText(this, "Nombre actualizado", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun mostrarNombreTienda() {
+        tvNombreTienda.text = NombreTiendaManager.obtenerNombre(this)
     }
 
     private fun configurarCategorias() {
