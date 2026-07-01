@@ -7,11 +7,16 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Producto::class, Venta::class, VentaDetalle::class], version = 7)
+@Database(
+    entities = [Producto::class, Venta::class, VentaDetalle::class, Proveedor::class, Fiado::class],
+    version = 8
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao
     abstract fun ventaDao(): VentaDao
+    abstract fun proveedorDao(): ProveedorDao
+    abstract fun fiadoDao(): FiadoDao
 
     companion object {
         @Volatile
@@ -75,6 +80,33 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS proveedores (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        nombre TEXT NOT NULL,
+                        telefono TEXT,
+                        producto TEXT,
+                        direccion TEXT,
+                        notas TEXT,
+                        imagenUri TEXT,
+                        timestamp INTEGER NOT NULL
+                    )
+                """)
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS fiados (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        nombre TEXT NOT NULL,
+                        telefono TEXT,
+                        monto REAL NOT NULL,
+                        descripcion TEXT,
+                        timestamp INTEGER NOT NULL
+                    )
+                """)
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instancia ?: synchronized(this) {
                 instancia ?: Room.databaseBuilder(
@@ -82,7 +114,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "inventario_db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
                     .allowMainThreadQueries()
                     .build()
                     .also { instancia = it }

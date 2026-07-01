@@ -11,7 +11,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class VentaAdapter(
-    private var ventas: List<Venta>
+    private var ventas: List<Venta>,
+    private val onClick: (Venta) -> Unit = {}
 ) : RecyclerView.Adapter<VentaAdapter.VH>() {
 
     private val fmt = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("es", "MX"))
@@ -35,6 +36,7 @@ class VentaAdapter(
         holder.tvArticulos.text = "${venta.totalArticulos} artículo(s)"
         holder.tvTotal.text = "$${"%.2f".format(venta.total)}"
         holder.tvGanancia.text = "Gan: $${"%.2f".format(venta.ganancia)}"
+        holder.itemView.setOnClickListener { onClick(venta) }
     }
 
     override fun getItemCount() = ventas.size

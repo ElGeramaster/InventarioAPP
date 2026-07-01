@@ -28,6 +28,9 @@
         <activity android:name=".DetalleProductoActivity"/>
         <activity android:name=".ReportesActivity"/>
         <activity android:name=".HistorialVentas.HistorialVentasActivity"/>
+        <activity android:name=".ProveedoresActivity"/>
+        <activity android:name=".AgregarProveedorActivity"/>
+        <activity android:name=".FiadosActivity"/>
         <activity
             android:name=".TiendaGUI.ContinuousScanActivity"
             android:screenOrientation="portrait" />
