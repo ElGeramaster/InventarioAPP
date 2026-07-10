@@ -23,6 +23,9 @@ class DetalleProductoActivity : BaseActivity() {
     private lateinit var tvAlertaStock: TextView
     private lateinit var tvCodigoBarras: TextView
     private lateinit var labelCodigoBarras: TextView
+    private lateinit var tvFechaCaducidad: TextView
+    private lateinit var labelFechaCaducidad: TextView
+    private lateinit var tvAlertaCaducidad: TextView
     private lateinit var ivDetalleProducto: ImageView
     private lateinit var cardImagen: CardView
     private lateinit var db: AppDatabase
@@ -44,6 +47,9 @@ class DetalleProductoActivity : BaseActivity() {
         tvAlertaStock     = findViewById(R.id.tvAlertaStock)
         tvCodigoBarras    = findViewById(R.id.tvDetalleCodigoBarras)
         labelCodigoBarras = findViewById(R.id.labelCodigoBarras)
+        tvFechaCaducidad    = findViewById(R.id.tvDetalleFechaCaducidad)
+        labelFechaCaducidad = findViewById(R.id.labelFechaCaducidad)
+        tvAlertaCaducidad   = findViewById(R.id.tvAlertaCaducidad)
         ivDetalleProducto = findViewById(R.id.ivDetalleProducto)
         cardImagen        = findViewById(R.id.cardImagen)
 
@@ -123,6 +129,36 @@ class DetalleProductoActivity : BaseActivity() {
             tvAlertaStock.visibility = View.VISIBLE
         } else {
             tvAlertaStock.visibility = View.GONE
+        }
+
+        // Mostrar fecha de caducidad y alerta si aplica
+        val fechaCaducidad = p.fechaCaducidad
+        if (fechaCaducidad != null) {
+            val formato = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+            tvFechaCaducidad.text = formato.format(java.util.Date(fechaCaducidad))
+            tvFechaCaducidad.visibility = View.VISIBLE
+            labelFechaCaducidad.visibility = View.VISIBLE
+
+            val dias = (fechaCaducidad - NotificationHelper.inicioDeHoy()) / (24L * 60 * 60 * 1000)
+            when {
+                dias < 0 -> {
+                    tvAlertaCaducidad.text = "Producto vencido hace ${-dias} día(s)"
+                    tvAlertaCaducidad.visibility = View.VISIBLE
+                }
+                dias == 0L -> {
+                    tvAlertaCaducidad.text = "El producto caduca hoy"
+                    tvAlertaCaducidad.visibility = View.VISIBLE
+                }
+                dias <= 7 -> {
+                    tvAlertaCaducidad.text = "El producto caduca en $dias día(s)"
+                    tvAlertaCaducidad.visibility = View.VISIBLE
+                }
+                else -> tvAlertaCaducidad.visibility = View.GONE
+            }
+        } else {
+            tvFechaCaducidad.visibility = View.GONE
+            labelFechaCaducidad.visibility = View.GONE
+            tvAlertaCaducidad.visibility = View.GONE
         }
     }
 

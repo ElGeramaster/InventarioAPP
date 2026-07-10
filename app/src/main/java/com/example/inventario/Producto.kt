@@ -21,7 +21,9 @@ data class Producto(
     // La venta por peso NO descuenta stock (solo se usa el precio por kilo).
     val vendePorPeso: Boolean = false,
     val precioKilo: Double = 0.0,
-    val precioCompraKilo: Double = 0.0
+    val precioCompraKilo: Double = 0.0,
+    // Fecha de caducidad (opcional). Se guarda como inicio del día (00:00) en millis.
+    val fechaCaducidad: Long? = null
 ) {
     /** El producto se puede vender por pieza (lleva control de stock). */
     val seVendePorPieza: Boolean

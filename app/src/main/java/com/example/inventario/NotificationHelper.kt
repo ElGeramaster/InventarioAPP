@@ -29,6 +29,13 @@ object NotificationHelper {
     /** Solo se avisa cuando faltan estos días o menos para que venza la licencia. */
     private const val DIAS_PARA_AVISAR = 5L
 
+    // --- Aviso de productos por caducar ---
+    private const val CHANNEL_CADUCIDAD_ID = "caducidad_channel"
+    private const val NOTIFICATION_CADUCIDAD_ID = 3001
+    private const val KEY_ULTIMA_FECHA_AVISO_CADUCIDAD = "ultima_fecha_aviso_caducidad"
+    /** Se avisa cuando a un producto le quedan estos días o menos para caducar. */
+    const val DIAS_ALERTA_CADUCIDAD = 7L
+
     fun crearCanal(context: Context) {
         val channel = NotificationChannel(
             CHANNEL_ID,
@@ -175,5 +182,106 @@ object NotificationHelper {
         NotificationManagerCompat.from(context).notify(NOTIFICATION_PAGO_ID, notification)
 
         prefs.edit().putString(KEY_ULTIMA_FECHA_AVISO_PAGO, hoy).apply()
+    }
+
+    /** Crea el canal para los avisos de productos por caducar (Android 8+). */
+    fun crearCanalCaducidad(context: Context) {
+        val channel = NotificationChannel(
+            CHANNEL_CADUCIDAD_ID,
+            "Alertas de caducidad",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Notificaciones cuando productos están próximos a caducar o ya vencieron"
+        }
+        val manager = context.getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(channel)
+    }
+
+    /**
+     * Avisa sobre productos vencidos o próximos a vencer (dentro de
+     * [DIAS_ALERTA_CADUCIDAD] días). Como máximo una vez por día. Debe
+     * llamarse al abrir la app.
+     */
+    fun verificarYNotificarCaducidad(context: Context) {
+        crearCanalCaducidad(context)
+        val db = AppDatabase.getInstance(context)
+
+        val hoy = inicioDeHoy()
+        val limite = hoy + DIAS_ALERTA_CADUCIDAD * MILIS_POR_DIA
+        val productos = db.productoDao().obtenerPorCaducar(limite)
+
+        if (productos.isEmpty()) {
+            NotificationManagerCompat.from(context).cancel(NOTIFICATION_CADUCIDAD_ID)
+            return
+        }
+
+        // Una sola vez por día: si ya avisamos hoy, no repetir.
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val hoyStr = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
+        if (prefs.getString(KEY_ULTIMA_FECHA_AVISO_CADUCIDAD, null) == hoyStr) return
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+        }
+
+        val cantidad = productos.size
+        val titulo = if (cantidad == 1) {
+            "1 producto por caducar"
+        } else {
+            "$cantidad productos por caducar"
+        }
+
+        val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val detalles = productos.take(5).joinToString("\n") { producto ->
+            val dias = (producto.fechaCaducidad!! - hoy) / MILIS_POR_DIA
+            val estado = when {
+                dias < 0 -> "vencido"
+                dias == 0L -> "caduca hoy"
+                else -> "caduca en $dias día(s)"
+            }
+            "• ${producto.nombre}: $estado (${formatoFecha.format(Date(producto.fechaCaducidad))})"
+        }
+        val textoCompleto = if (productos.size > 5) {
+            "$detalles\n...y ${productos.size - 5} más"
+        } else {
+            detalles
+        }
+
+        val intent = Intent(context, ReportesActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            context, 2, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_CADUCIDAD_ID)
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            .setContentTitle(titulo)
+            .setContentText("Hay productos vencidos o próximos a caducar")
+            .setStyle(NotificationCompat.BigTextStyle().bigText(textoCompleto))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        NotificationManagerCompat.from(context).notify(NOTIFICATION_CADUCIDAD_ID, notification)
+
+        prefs.edit().putString(KEY_ULTIMA_FECHA_AVISO_CADUCIDAD, hoyStr).apply()
+    }
+
+    private const val MILIS_POR_DIA = 24L * 60 * 60 * 1000
+
+    /** Timestamp (millis) del inicio del día de hoy, en la zona horaria del dispositivo. */
+    fun inicioDeHoy(): Long {
+        val cal = java.util.Calendar.getInstance()
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        cal.set(java.util.Calendar.MINUTE, 0)
+        cal.set(java.util.Calendar.SECOND, 0)
+        cal.set(java.util.Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
     }
 }

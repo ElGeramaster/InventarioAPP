@@ -36,6 +36,7 @@ class MainActivity : BaseActivity() {
     ) { concedido ->
         if (concedido) {
             NotificationHelper.verificarYNotificarStockBajo(this)
+            NotificationHelper.verificarYNotificarCaducidad(this)
         }
     }
 
@@ -60,6 +61,7 @@ class MainActivity : BaseActivity() {
         db = AppDatabase.getInstance(this)
 
         NotificationHelper.crearCanal(this)
+        NotificationHelper.crearCanalCaducidad(this)
         solicitarPermisoNotificaciones()
 
         recyclerView = findViewById(R.id.recyclerView)

@@ -41,4 +41,8 @@ interface ProductoDao {
 
     @Query("SELECT * FROM productos WHERE favorito = 1 AND (nombre LIKE '%' || :busqueda || '%') ORDER BY nombre ASC")
     fun buscarFavoritos(busqueda: String): List<Producto>
+
+    // Productos con fecha de caducidad asignada que ya vencieron o vencen antes de :limite.
+    @Query("SELECT * FROM productos WHERE fechaCaducidad IS NOT NULL AND fechaCaducidad <= :limite ORDER BY fechaCaducidad ASC")
+    fun obtenerPorCaducar(limite: Long): List<Producto>
 }
