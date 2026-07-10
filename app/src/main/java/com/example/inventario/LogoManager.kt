@@ -4,10 +4,6 @@ import android.content.Context
 import android.net.Uri
 import java.io.File
 
-/**
- * Guarda y recupera el logo de la tienda elegido por el usuario desde la galería.
- * La imagen se copia al almacenamiento interno y se recuerda su ruta.
- */
 object LogoManager {
 
     private const val PREFS = "logo_prefs"

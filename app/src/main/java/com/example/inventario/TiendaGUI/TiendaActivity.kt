@@ -35,7 +35,9 @@ import com.example.inventario.LogoManager
 import com.example.inventario.MainActivity
 import com.example.inventario.NombreTiendaManager
 import com.example.inventario.NotificationHelper
+import com.example.inventario.FiadosActivity
 import com.example.inventario.Producto
+import com.example.inventario.ProveedoresActivity
 import com.example.inventario.R
 import com.example.inventario.ReportesActivity
 import com.example.inventario.Venta
@@ -227,12 +229,12 @@ class TiendaActivity : BaseActivity() {
 
         findViewById<TextView>(R.id.menuProveedores).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
-            Toast.makeText(this, "Proveedores - Próximamente", Toast.LENGTH_SHORT).show()
+            confirmarSalida { startActivity(Intent(this, ProveedoresActivity::class.java)) }
         }
 
         findViewById<TextView>(R.id.menuFiados).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
-            Toast.makeText(this, "Fiados a clientes - Próximamente", Toast.LENGTH_SHORT).show()
+            confirmarSalida { startActivity(Intent(this, FiadosActivity::class.java)) }
         }
 
         findViewById<TextView>(R.id.menuAjustes).setOnClickListener {

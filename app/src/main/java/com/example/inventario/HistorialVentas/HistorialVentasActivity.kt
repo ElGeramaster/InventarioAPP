@@ -15,6 +15,7 @@ import com.example.inventario.R
 import com.example.inventario.Venta
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
 import java.util.*
 
 class HistorialVentasActivity : BaseActivity() {
@@ -64,7 +65,7 @@ class HistorialVentasActivity : BaseActivity() {
         btnSemana = findViewById(R.id.btnSemana)
         btnMes = findViewById(R.id.btnMes)
 
-        ventaAdapter = VentaAdapter(emptyList())
+        ventaAdapter = VentaAdapter(emptyList()) { venta -> mostrarDetalleVenta(venta) }
         rvVentas.layoutManager = LinearLayoutManager(this)
         rvVentas.adapter = ventaAdapter
         rvVentas.isNestedScrollingEnabled = false
@@ -290,6 +291,51 @@ class HistorialVentasActivity : BaseActivity() {
             tvSinVentas.visibility = View.GONE
             rvVentas.visibility = View.VISIBLE
         }
+    }
+
+    /**
+     * Muestra un diálogo con el desglose de una venta: fecha, totales y la lista
+     * de productos vendidos con su cantidad y subtotal.
+     */
+    private fun mostrarDetalleVenta(venta: Venta) {
+        val detalles = db.ventaDao().obtenerDetallesVenta(venta.id)
+
+        val vista = layoutInflater.inflate(R.layout.dialog_detalle_venta, null)
+        val tvResumen = vista.findViewById<TextView>(R.id.tvDetalleResumen)
+        val contenedor = vista.findViewById<LinearLayout>(R.id.containerProductos)
+
+        val fmtFecha = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("es", "MX"))
+        tvResumen.text = buildString {
+            append("${fmtFecha.format(Date(venta.timestamp))}\n")
+            append("Total: $${"%.2f".format(venta.total)}   ·   ")
+            append("Ganancia: $${"%.2f".format(venta.ganancia)}\n")
+            append("${venta.totalArticulos} artículo(s)")
+        }
+
+        if (detalles.isEmpty()) {
+            val tv = TextView(this)
+            tv.text = "No se registró el desglose de esta venta."
+            tv.setTextColor(android.graphics.Color.parseColor("#9E9E9E"))
+            tv.textSize = 14f
+            tv.setPadding(0, 12, 0, 12)
+            contenedor.addView(tv)
+        } else {
+            for (detalle in detalles) {
+                val fila = layoutInflater.inflate(R.layout.item_detalle_venta, contenedor, false)
+                fila.findViewById<TextView>(R.id.tvNombreDetalle).text = detalle.productoNombre
+                fila.findViewById<TextView>(R.id.tvCantidadDetalle).text =
+                    "${detalle.cantidad} x $${"%.2f".format(detalle.precioUnitario)}"
+                fila.findViewById<TextView>(R.id.tvSubtotalDetalle).text =
+                    "$${"%.2f".format(detalle.subtotal)}"
+                contenedor.addView(fila)
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Detalle de venta")
+            .setView(vista)
+            .setPositiveButton("Cerrar", null)
+            .show()
     }
 
     private fun confirmarEliminarTodo() {
