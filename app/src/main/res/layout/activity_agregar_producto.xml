@@ -296,6 +296,45 @@
 
         </LinearLayout>
 
+        <!-- Sección de fecha de caducidad -->
+        <TextView
+            android:id="@+id/tvFechaCaducidadLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Fecha de caducidad (opcional)"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            app:layout_constraintTop_toBottomOf="@id/layoutCodigoBarras"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilFechaCaducidad"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Selecciona una fecha"
+            android:textColorHint="#757575"
+            app:hintTextColor="#424242"
+            app:boxStrokeColor="#6200EE"
+            app:endIconMode="clear_text"
+            app:layout_constraintTop_toBottomOf="@id/tvFechaCaducidadLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFechaCaducidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#212121"
+                android:focusable="false"
+                android:cursorVisible="false"
+                android:inputType="none"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- Sección de imagen del producto -->
         <TextView
             android:id="@+id/tvImagenLabel"
@@ -305,7 +344,7 @@
             android:text="Imagen del producto"
             android:textSize="14sp"
             android:textColor="#757575"
-            app:layout_constraintTop_toBottomOf="@id/layoutCodigoBarras"
+            app:layout_constraintTop_toBottomOf="@id/tilFechaCaducidad"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

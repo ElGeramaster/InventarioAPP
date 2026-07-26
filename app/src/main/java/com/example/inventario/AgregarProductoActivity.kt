@@ -1,6 +1,7 @@
 package com.example.inventario
 
 import android.Manifest
+import android.app.DatePickerDialog
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -22,6 +23,7 @@ import com.journeyapps.barcodescanner.ScanOptions
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -35,6 +37,7 @@ class AgregarProductoActivity : BaseActivity() {
     private lateinit var etCantidad: TextInputEditText
     private lateinit var etStockMinimo: TextInputEditText
     private lateinit var etCodigoBarras: TextInputEditText
+    private lateinit var etFechaCaducidad: TextInputEditText
     private lateinit var switchPorPeso: com.google.android.material.switchmaterial.SwitchMaterial
     private lateinit var layoutPeso: View
     private lateinit var tvPesoAyuda: View
@@ -48,6 +51,8 @@ class AgregarProductoActivity : BaseActivity() {
     private var productoExistente: Producto? = null
     private var imagenUri: String? = null
     private var tempCameraUri: Uri? = null
+    private var fechaCaducidadMillis: Long? = null
+    private val formatoFechaCaducidad = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
     // Lanzador para tomar foto con la cámara
     private val tomarFotoLauncher = registerForActivityResult(
@@ -108,6 +113,7 @@ class AgregarProductoActivity : BaseActivity() {
         etCantidad     = findViewById(R.id.etCantidad)
         etStockMinimo  = findViewById(R.id.etStockMinimo)
         etCodigoBarras = findViewById(R.id.etCodigoBarras)
+        etFechaCaducidad = findViewById(R.id.etFechaCaducidad)
         switchPorPeso  = findViewById(R.id.switchPorPeso)
         layoutPeso     = findViewById(R.id.layoutPeso)
         tvPesoAyuda    = findViewById(R.id.tvPesoAyuda)
@@ -120,6 +126,17 @@ class AgregarProductoActivity : BaseActivity() {
         switchPorPeso.setOnCheckedChangeListener { _, marcado ->
             aplicarModoPeso(marcado)
         }
+
+        etFechaCaducidad.setOnClickListener {
+            mostrarSelectorFecha()
+        }
+        etFechaCaducidad.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                if (s.isNullOrEmpty()) fechaCaducidadMillis = null
+            }
+        })
 
         cargarCategorias()
 
@@ -180,6 +197,25 @@ class AgregarProductoActivity : BaseActivity() {
         acvCategoria.setOnClickListener { acvCategoria.showDropDown() }
     }
 
+    private fun mostrarSelectorFecha() {
+        val cal = Calendar.getInstance()
+        fechaCaducidadMillis?.let { cal.timeInMillis = it }
+        DatePickerDialog(
+            this,
+            { _, year, month, day ->
+                val seleccion = Calendar.getInstance().apply {
+                    set(year, month, day, 0, 0, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+                fechaCaducidadMillis = seleccion.timeInMillis
+                etFechaCaducidad.setText(formatoFechaCaducidad.format(seleccion.time))
+            },
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
     private fun llenarCampos(producto: Producto) {
         etNombre.setText(producto.nombre)
         acvCategoria.setText(producto.categoria, false)
@@ -188,6 +224,10 @@ class AgregarProductoActivity : BaseActivity() {
         etCantidad.setText(producto.cantidad.toString())
         etStockMinimo.setText(producto.stockMinimo.toString())
         etCodigoBarras.setText(producto.codigoBarras ?: "")
+        producto.fechaCaducidad?.let {
+            fechaCaducidadMillis = it
+            etFechaCaducidad.setText(formatoFechaCaducidad.format(Date(it)))
+        }
         switchPorPeso.isChecked = producto.vendePorPeso
         if (producto.precioKilo > 0) etPrecioKilo.setText(producto.precioKilo.toString())
         if (producto.precioCompraKilo > 0) etPrecioCompraKilo.setText(producto.precioCompraKilo.toString())
@@ -329,7 +369,8 @@ class AgregarProductoActivity : BaseActivity() {
                 codigoBarras = codigoBarras,
                 vendePorPeso = vendePorPeso,
                 precioKilo = precioKilo,
-                precioCompraKilo = precioCompraKilo
+                precioCompraKilo = precioCompraKilo,
+                fechaCaducidad = fechaCaducidadMillis
             )
             db.productoDao().actualizar(actualizado)
             Toast.makeText(this, "Producto actualizado", Toast.LENGTH_SHORT).show()
@@ -345,14 +386,16 @@ class AgregarProductoActivity : BaseActivity() {
                 codigoBarras = codigoBarras,
                 vendePorPeso = vendePorPeso,
                 precioKilo = precioKilo,
-                precioCompraKilo = precioCompraKilo
+                precioCompraKilo = precioCompraKilo,
+                fechaCaducidad = fechaCaducidadMillis
             )
             db.productoDao().insertar(nuevo)
             Toast.makeText(this, "Producto guardado", Toast.LENGTH_SHORT).show()
         }
 
-        // Verificar stock bajo y notificar
+        // Verificar stock bajo y caducidad, y notificar
         NotificationHelper.verificarYNotificarStockBajo(this)
+        NotificationHelper.verificarYNotificarCaducidad(this)
 
         finish()
     }
