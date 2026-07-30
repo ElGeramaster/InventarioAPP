@@ -1,10 +1,13 @@
 package com.example.inventario
 
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -23,6 +26,8 @@ class ProductoCaducidadAdapter(
         val tvFecha: TextView = itemView.findViewById(R.id.tvFechaCaducidadItem)
         val tvEstado: TextView = itemView.findViewById(R.id.tvEstadoCaducidad)
         val viewIndicador: View = itemView.findViewById(R.id.viewIndicadorCaducidad)
+        val ivThumbnail: ImageView = itemView.findViewById(R.id.ivThumbnailCaducidad)
+        val cardThumbnail: CardView = itemView.findViewById(R.id.cardThumbnailCaducidad)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductoCaducidadViewHolder {
@@ -38,6 +43,18 @@ class ProductoCaducidadAdapter(
         holder.tvNombre.text = producto.nombre
         holder.tvCategoria.text = producto.categoria
         holder.tvFecha.text = formatoFecha.format(Date(fechaCaducidad))
+
+        if (!producto.imagenUri.isNullOrEmpty()) {
+            val bitmap = BitmapFactory.decodeFile(producto.imagenUri)
+            if (bitmap != null) {
+                holder.ivThumbnail.setImageBitmap(bitmap)
+                holder.cardThumbnail.visibility = View.VISIBLE
+            } else {
+                holder.cardThumbnail.visibility = View.GONE
+            }
+        } else {
+            holder.cardThumbnail.visibility = View.GONE
+        }
 
         val dias = (fechaCaducidad - NotificationHelper.inicioDeHoy()) / (24L * 60 * 60 * 1000)
         val (texto, color) = when {

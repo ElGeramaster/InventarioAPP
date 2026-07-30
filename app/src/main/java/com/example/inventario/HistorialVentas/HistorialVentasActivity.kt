@@ -99,8 +99,8 @@ class HistorialVentasActivity : BaseActivity() {
     }
 
     private fun actualizarBotonesFiltro() {
-        val verde = "#43A047"
-        val verdeClaro = "#E8F5E9"
+        val naranja = "#FF8F00"
+        val naranjaClaro = "#FFF3E0"
         val blanco = "#FFFFFF"
 
         listOf(
@@ -109,14 +109,14 @@ class HistorialVentasActivity : BaseActivity() {
         ).forEach { (btn, filtro) ->
             if (filtro == filtroActual) {
                 btn.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                    android.graphics.Color.parseColor(verde)
+                    android.graphics.Color.parseColor(naranja)
                 )
                 btn.setTextColor(android.graphics.Color.parseColor(blanco))
             } else {
                 btn.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                    android.graphics.Color.parseColor(verdeClaro)
+                    android.graphics.Color.parseColor(naranjaClaro)
                 )
-                btn.setTextColor(android.graphics.Color.parseColor(verde))
+                btn.setTextColor(android.graphics.Color.parseColor(naranja))
             }
         }
     }

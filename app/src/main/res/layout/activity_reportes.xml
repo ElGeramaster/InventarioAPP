@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#FFFDE7">
 
     <!-- Tarjeta resumen general -->
     <androidx.cardview.widget.CardView
@@ -197,10 +197,10 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!-- Secciones de stock bajo y productos por caducar (mitad y mitad) -->
+    <!-- Selector de vista: Bajo stock / Por caducar -->
 
     <LinearLayout
-        android:id="@+id/layoutSeccionesInferiores"
+        android:id="@+id/layoutSeccionInferior"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
@@ -209,75 +209,57 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Título sección stock bajo -->
+        <!-- Botones para elegir qué lista ver -->
         <LinearLayout
+            android:id="@+id/layoutToggleLista"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvStockBajoCount"
-                android:layout_width="wrap_content"
+                android:id="@+id/btnVerStockBajo"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:textColor="#C62828"
-                android:textSize="25sp"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:gravity="center"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="0\nBAJO STOCK"
+                android:textAllCaps="false"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:background="@drawable/bg_toggle_reportes"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"/>
 
             <TextView
-                android:id="@+id/tvTituloStockBajo"
-                android:layout_width="wrap_content"
+                android:id="@+id/btnVerPorCaducar"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="Productos con stock bajo"
-                android:textColor="#C62828"
-                android:textSize="25sp"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:gravity="center"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:text="0\nPOR CADUCAR"
+                android:textAllCaps="false"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:background="@drawable/bg_toggle_reportes"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"/>
 
         </LinearLayout>
 
-        <!-- Contenedor del Fragment de stock bajo -->
+        <!-- Contenedor del Fragment activo (stock bajo o por caducar) -->
         <FrameLayout
             android:id="@+id/fragmentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="8dp" />
-
-        <!-- Título sección por caducar -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvPorCaducarCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textColor="#E65100"
-                android:textSize="25sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvTituloPorCaducar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="Productos por caducar"
-                android:textColor="#E65100"
-                android:textSize="25sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <!-- Contenedor del Fragment de productos por caducar -->
-        <FrameLayout
-            android:id="@+id/fragmentContainerCaducidad"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"

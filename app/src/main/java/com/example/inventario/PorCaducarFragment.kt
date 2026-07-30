@@ -37,7 +37,7 @@ class PorCaducarFragment : Fragment() {
 
     private fun cargarPorCaducar() {
         val limite = NotificationHelper.inicioDeHoy() +
-            NotificationHelper.DIAS_ALERTA_CADUCIDAD * 24L * 60 * 60 * 1000
+                NotificationHelper.DIAS_ALERTA_CADUCIDAD * 24L * 60 * 60 * 1000
         val productos = db.productoDao().obtenerPorCaducar(limite)
 
         if (productos.isEmpty()) {
