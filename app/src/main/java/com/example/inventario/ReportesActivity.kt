@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 
 class ReportesActivity : BaseActivity() {
 
@@ -21,11 +20,23 @@ class ReportesActivity : BaseActivity() {
     private enum class Vista { STOCK_BAJO, POR_CADUCAR }
     private var vistaActual = Vista.STOCK_BAJO
 
+    private companion object {
+        const val TAG_STOCK_BAJO = "fragment_stock_bajo"
+        const val TAG_POR_CADUCAR = "fragment_por_caducar"
+        const val ESTADO_VISTA = "vista_actual"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reportes)
+
+        // Recuperar la pestaña elegida si la actividad se recreó (girar pantalla,
+        // cambio de tema...) para no volver siempre a "bajo stock".
+        savedInstanceState?.getString(ESTADO_VISTA)?.let { guardada ->
+            vistaActual = runCatching { Vista.valueOf(guardada) }.getOrDefault(Vista.STOCK_BAJO)
+        }
 
         title = "Reportes"
 
@@ -45,6 +56,11 @@ class ReportesActivity : BaseActivity() {
         cargarResumen()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(ESTADO_VISTA, vistaActual.name)
+    }
+
     override fun onResume() {
         super.onResume()
         cargarResumen()
@@ -52,15 +68,35 @@ class ReportesActivity : BaseActivity() {
         porCaducarFragment.recargar()
     }
 
+    /**
+     * Deja los dos fragments dentro del contenedor mostrando solo el de la
+     * pestaña activa.
+     *
+     * Si la actividad se recrea, el FragmentManager ya restauró los fragments
+     * anteriores, así que hay que reutilizarlos: crear otros nuevos los apilaba
+     * en el mismo contenedor y las dos listas se dibujaban una encima de otra.
+     */
     private fun cargarFragmentos() {
-        stockBajoFragment = StockBajoFragment()
-        porCaducarFragment = PorCaducarFragment()
+        val fm = supportFragmentManager
+        val restauradoStock = fm.findFragmentByTag(TAG_STOCK_BAJO) as? StockBajoFragment
+        val restauradoCaducar = fm.findFragmentByTag(TAG_POR_CADUCAR) as? PorCaducarFragment
 
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainer, porCaducarFragment)
-            .hide(porCaducarFragment)
-            .add(R.id.fragmentContainer, stockBajoFragment)
-            .commit()
+        stockBajoFragment = restauradoStock ?: StockBajoFragment()
+        porCaducarFragment = restauradoCaducar ?: PorCaducarFragment()
+
+        val transaction = fm.beginTransaction()
+        if (restauradoStock == null) {
+            transaction.add(R.id.fragmentContainer, stockBajoFragment, TAG_STOCK_BAJO)
+        }
+        if (restauradoCaducar == null) {
+            transaction.add(R.id.fragmentContainer, porCaducarFragment, TAG_POR_CADUCAR)
+        }
+        if (vistaActual == Vista.STOCK_BAJO) {
+            transaction.show(stockBajoFragment).hide(porCaducarFragment)
+        } else {
+            transaction.show(porCaducarFragment).hide(stockBajoFragment)
+        }
+        transaction.commit()
 
         actualizarBotonesToggle()
     }

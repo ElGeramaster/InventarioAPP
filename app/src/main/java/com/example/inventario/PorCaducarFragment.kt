@@ -56,8 +56,11 @@ class PorCaducarFragment : Fragment() {
         }
     }
 
-    // Método público para recargar desde ReportesActivity
+    // Método público para recargar desde ReportesActivity.
+    // Si todavía no existe la vista no hay nada que refrescar: onViewCreated
+    // cargará los datos en cuanto se cree.
     fun recargar() {
+        if (view == null) return
         cargarPorCaducar()
     }
 }

@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -31,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.inventario.AppDatabase
 import com.example.inventario.BaseActivity
 import com.example.inventario.HistorialVentas.HistorialVentasActivity
+import com.example.inventario.ImagenUtils
 import com.example.inventario.LogoManager
 import com.example.inventario.MainActivity
 import com.example.inventario.NombreTiendaManager
@@ -259,16 +259,14 @@ class TiendaActivity : BaseActivity() {
     }
 
     private fun mostrarLogoTienda() {
-        val path = LogoManager.obtenerPath(this)
-        if (path != null) {
-            val bitmap = BitmapFactory.decodeFile(path)
-            if (bitmap != null) {
-                ivLogoTienda.setImageBitmap(bitmap)
-                ivLogoTienda.visibility = View.VISIBLE
-                return
-            }
+        val bitmap = ImagenUtils.grande(LogoManager.obtenerPath(this))
+        if (bitmap != null) {
+            ivLogoTienda.setImageBitmap(bitmap)
+            ivLogoTienda.visibility = View.VISIBLE
+        } else {
+            ivLogoTienda.setImageDrawable(null)
+            ivLogoTienda.visibility = View.GONE
         }
-        ivLogoTienda.visibility = View.GONE
     }
 
     private fun abrirAjustes() {
@@ -579,13 +577,11 @@ class TiendaActivity : BaseActivity() {
         tvPrecioUnitario.text = "$${"%.2f".format(producto.precio)} MXN c/u"
         tvStock.text = "Disponibles: $disponible"
 
-        if (!producto.imagenUri.isNullOrEmpty()) {
-            val bitmap = BitmapFactory.decodeFile(producto.imagenUri)
-            if (bitmap != null) {
-                ivFoto.setImageBitmap(bitmap)
-                ivFoto.visibility = View.VISIBLE
-                tvSinFoto.visibility = View.GONE
-            }
+        val foto = ImagenUtils.grande(producto.imagenUri)
+        if (foto != null) {
+            ivFoto.setImageBitmap(foto)
+            ivFoto.visibility = View.VISIBLE
+            tvSinFoto.visibility = View.GONE
         }
 
         var cantidad = 1

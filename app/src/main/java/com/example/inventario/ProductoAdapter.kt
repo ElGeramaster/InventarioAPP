@@ -1,6 +1,5 @@
 package com.example.inventario
 
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -53,15 +52,12 @@ class ProductoAdapter(
         }
 
         // Mostrar thumbnail si hay imagen
-        if (!producto.imagenUri.isNullOrEmpty()) {
-            val bitmap = BitmapFactory.decodeFile(producto.imagenUri)
-            if (bitmap != null) {
-                holder.ivThumbnail.setImageBitmap(bitmap)
-                holder.cardThumbnail.visibility = View.VISIBLE
-            } else {
-                holder.cardThumbnail.visibility = View.GONE
-            }
+        val miniatura = ImagenUtils.miniatura(producto.imagenUri)
+        if (miniatura != null) {
+            holder.ivThumbnail.setImageBitmap(miniatura)
+            holder.cardThumbnail.visibility = View.VISIBLE
         } else {
+            holder.ivThumbnail.setImageDrawable(null)
             holder.cardThumbnail.visibility = View.GONE
         }
 

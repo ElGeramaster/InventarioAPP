@@ -1,7 +1,6 @@
 package com.example.inventario
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -103,15 +102,12 @@ class DetalleProductoActivity : BaseActivity() {
         tvStockMinimo.text = "${p.stockMinimo} unidades"
 
         // Mostrar imagen si existe
-        if (!p.imagenUri.isNullOrEmpty()) {
-            val bitmap = BitmapFactory.decodeFile(p.imagenUri)
-            if (bitmap != null) {
-                ivDetalleProducto.setImageBitmap(bitmap)
-                cardImagen.visibility = View.VISIBLE
-            } else {
-                cardImagen.visibility = View.GONE
-            }
+        val foto = ImagenUtils.grande(p.imagenUri)
+        if (foto != null) {
+            ivDetalleProducto.setImageBitmap(foto)
+            cardImagen.visibility = View.VISIBLE
         } else {
+            ivDetalleProducto.setImageDrawable(null)
             cardImagen.visibility = View.GONE
         }
 

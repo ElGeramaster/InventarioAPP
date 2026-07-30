@@ -17,9 +17,11 @@
         <!-- Toolbar / Header -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardHeader"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
@@ -29,19 +31,43 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="12dp">
 
-                <ImageButton
-                    android:id="@+id/btnMenuHamburger"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@android:drawable/ic_menu_sort_by_size"
-                    app:tint="#2E7D32" />
+                <!-- El botón va dentro de un FrameLayout para que el punto de
+                     aviso de stock bajo se dibuje ENCIMA del icono. -->
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageButton
+                        android:id="@+id/btnMenuHamburger"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Abrir menú"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_menu_hamburger"
+                        app:tint="#2E7D32" />
+
+                    <!-- Punto de aviso de stock bajo -->
+                    <View
+                        android:id="@+id/dotMenuStock"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="4dp"
+                        android:background="@drawable/ic_dot_alerta"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                </FrameLayout>
 
                 <ImageView
                     android:id="@+id/ivLogoTienda"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="8dp"
+                    android:contentDescription="Logo de la tienda"
+                    android:scaleType="fitCenter"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
@@ -63,30 +89,24 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Buscar producto"
                     android:src="@android:drawable/ic_menu_search"
                     app:tint="#2E7D32" />
 
-                <View
-                    android:id="@+id/dotMenuStock"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/ic_dot_alerta"
-                    android:visibility="gone" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <!-- Buscador Expandible -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardBuscar"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:visibility="gone"
             app:cardCornerRadius="8dp"
             app:cardElevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardHeader"
             tools:visibility="visible">
 
@@ -98,18 +118,22 @@
                 android:hint="Buscar productos..."
                 android:imeOptions="actionSearch"
                 android:inputType="text"
-                android:paddingHorizontal="16dp" />
+                android:paddingHorizontal="16dp"
+                android:singleLine="true"
+                android:textColor="#212121"
+                android:textColorHint="#9E9E9E" />
         </androidx.cardview.widget.CardView>
 
         <!-- Categorías -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCategorias"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
-            android:orientation="horizontal"
             android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardBuscar" />
 
         <!-- Lista de Productos -->
@@ -118,29 +142,43 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="4dp"
+            android:clipToPadding="false"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="4dp"
             app:layout_constraintBottom_toTopOf="@id/cardCarrito"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rvCategorias" />
 
+        <!-- Mensaje cuando no hay productos. Se ancla a la misma zona que la
+             lista y NO a la lista, porque cuando está vacía se oculta (GONE) y
+             el texto quedaba descolocado. -->
         <TextView
             android:id="@+id/tvSinProductos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No hay productos en esta categoría"
+            android:textColor="#9E9E9E"
+            android:textSize="14sp"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/rvProductosTienda"
-            app:layout_constraintEnd_toEndOf="@id/rvProductosTienda"
-            app:layout_constraintStart_toStartOf="@id/rvProductosTienda"
-            app:layout_constraintTop_toTopOf="@id/rvProductosTienda" />
+            app:layout_constraintBottom_toTopOf="@id/cardCarrito"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rvCategorias"
+            tools:visibility="visible" />
 
         <!-- Carrito (Panel Inferior) -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardCarrito"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="0dp"
             app:cardElevation="16dp"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -154,23 +192,26 @@
                     android:layout_height="48dp"
                     android:gravity="center"
                     android:text="Carrito vacío"
-                    android:textColor="#757575" />
+                    android:textColor="#757575"
+                    android:textSize="13sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvCarrito"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxHeight="200dp"
-                    android:visibility="gone" />
+                    android:minHeight="60dp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <Button
                     android:id="@+id/btnRealizarVenta"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
                     android:layout_marginTop="8dp"
                     android:backgroundTint="#2E7D32"
                     android:text="REALIZAR VENTA"
                     android:textColor="#FFFFFF"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -180,7 +221,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:src="@android:drawable/ic_menu_camera"
+            android:contentDescription="Escanear código de barras"
+            android:src="@drawable/ic_barcode"
             app:backgroundTint="#FF6F00"
             app:layout_constraintBottom_toTopOf="@id/cardCarrito"
             app:layout_constraintEnd_toEndOf="parent"
@@ -188,83 +230,139 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Menú Lateral (Drawer) -->
-    <com.google.android.material.navigation.NavigationView
-        android:layout_width="wrap_content"
+    <!-- Menú lateral deslizable -->
+    <LinearLayout
+        android:id="@+id/navDrawer"
+        android:layout_width="220dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#FFFFFF">
+        android:background="#000000"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <!-- Header: MENU -->
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="wrap_content"
+            android:background="#1565C0"
+            android:gravity="center"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:text="MENU"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="24dp"
-                android:text="MENÚ"
-                android:textColor="#1B5E20"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+        <!-- INVENTARIO -->
+        <TextView
+            android:id="@+id/menuInventario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#388E3C"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp"
+            android:text="INVENTARIO"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/menuInventario"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:text="Mi Mercancía"
-                android:textSize="18sp" />
+        <!-- Mi mercancía y reportes -->
+        <TextView
+            android:id="@+id/menuReportes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFF59D"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:text="Mi mercancía y\nreportes"
+            android:textColor="#5D4037"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/menuReportes"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:text="Reportes de Venta"
-                android:textSize="18sp" />
+        <!-- Historial de ventas -->
+        <TextView
+            android:id="@+id/menuHistorial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FF8F00"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:text="Historial de\nventas"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/menuHistorial"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:text="Historial de Ventas"
-                android:textSize="18sp" />
+        <!-- Proveedores -->
+        <TextView
+            android:id="@+id/menuProveedores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#CE93D8"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp"
+            android:text="Proveedores"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/menuProveedores"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:text="Proveedores"
-                android:textSize="18sp" />
+        <!-- Fiados a clientes -->
+        <TextView
+            android:id="@+id/menuFiados"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#E53935"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:text="Fiados a\nclientes"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/menuFiados"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:text="Clientes (Fiados)"
-                android:textSize="18sp" />
+        <!-- Ajustes -->
+        <TextView
+            android:id="@+id/menuAjustes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#7B1FA2"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp"
+            android:text="Ajustes"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="8dp"
-                android:background="#EEEEEE" />
+        <!-- Espaciador flexible -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#FFFFFF" />
 
-            <TextView
-                android:id="@+id/menuAjustes"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:text="Ajustes"
-                android:textSize="18sp" />
+        <!-- Marca de agua -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:gravity="center"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:text="GerardoA. - 9621350889"
+            android:textColor="#424242"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-        </LinearLayout>
-    </com.google.android.material.navigation.NavigationView>
+    </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

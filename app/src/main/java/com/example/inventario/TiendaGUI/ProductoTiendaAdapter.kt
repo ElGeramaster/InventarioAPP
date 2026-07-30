@@ -1,7 +1,6 @@
 package com.example.inventario.TiendaGUI
 
 import android.content.res.ColorStateList
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.inventario.ImagenUtils
 import com.example.inventario.Producto
 import com.example.inventario.R
 
@@ -47,17 +47,13 @@ class ProductoTiendaAdapter(
         }
 
         // Mostrar imagen si existe
-        if (!producto.imagenUri.isNullOrEmpty()) {
-            val bitmap = BitmapFactory.decodeFile(producto.imagenUri)
-            if (bitmap != null) {
-                holder.ivFoto.setImageBitmap(bitmap)
-                holder.ivFoto.visibility = View.VISIBLE
-                holder.tvSinFoto.visibility = View.GONE
-            } else {
-                holder.ivFoto.visibility = View.GONE
-                holder.tvSinFoto.visibility = View.VISIBLE
-            }
+        val foto = ImagenUtils.miniatura(producto.imagenUri)
+        if (foto != null) {
+            holder.ivFoto.setImageBitmap(foto)
+            holder.ivFoto.visibility = View.VISIBLE
+            holder.tvSinFoto.visibility = View.GONE
         } else {
+            holder.ivFoto.setImageDrawable(null)
             holder.ivFoto.visibility = View.GONE
             holder.tvSinFoto.visibility = View.VISIBLE
         }
