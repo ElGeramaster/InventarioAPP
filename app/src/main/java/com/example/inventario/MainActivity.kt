@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.inventario.TiendaGUI.TiendaActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
@@ -92,10 +91,6 @@ class MainActivity : BaseActivity() {
             escanearCodigoLauncher.launch(options)
         }
 
-        findViewById<android.widget.Button>(R.id.btnIrTienda).setOnClickListener {
-            startActivity(Intent(this, TiendaActivity::class.java))
-        }
-
         val searchView = findViewById<SearchView>(R.id.searchView)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = true.also {
@@ -112,8 +107,6 @@ class MainActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         cargarProductos()
-        findViewById<android.widget.Button>(R.id.btnIrTienda).text =
-            NombreTiendaManager.obtenerNombre(this)
     }
 
     private fun solicitarPermisoNotificaciones() {

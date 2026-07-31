@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- Barra superior con botón de Tienda -->
+    <!-- Barra superior -->
     <LinearLayout
         android:id="@+id/layoutTopBar"
         android:layout_width="0dp"
@@ -30,18 +30,6 @@
             android:textColor="#212121"
             android:textSize="30sp"
             android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnIrTienda"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#43A047"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="Tienda"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp" />
 
     </LinearLayout>
 
