@@ -36,10 +36,12 @@ import com.example.inventario.MainActivity
 import com.example.inventario.NombreTiendaManager
 import com.example.inventario.NotificationHelper
 import com.example.inventario.FiadosActivity
+import com.example.inventario.LectorCodigoBarras
 import com.example.inventario.Producto
 import com.example.inventario.ProveedoresActivity
 import com.example.inventario.R
 import com.example.inventario.ReportesActivity
+import com.example.inventario.SonidoUI
 import com.example.inventario.Venta
 import com.example.inventario.VentaDetalle
 
@@ -53,6 +55,8 @@ class TiendaActivity : BaseActivity() {
     private lateinit var rvCarrito: RecyclerView
     private lateinit var cardBuscar: CardView
     private lateinit var etBuscar: EditText
+    private lateinit var etCodigoLector: EditText
+    private lateinit var btnLimpiarLector: ImageButton
     private lateinit var btnToggleBuscar: ImageButton
     private lateinit var btnRealizar: Button
     private lateinit var tvSinProductos: TextView
@@ -61,6 +65,9 @@ class TiendaActivity : BaseActivity() {
     private lateinit var dotMenuStock: View
     private lateinit var ivLogoTienda: ImageView
     private lateinit var tvNombreTienda: TextView
+
+    /** Lector Bluetooth (HID) que escribe el código en [etCodigoLector]. */
+    private var lector: LectorCodigoBarras? = null
 
     private lateinit var categoriaAdapter: CategoriaTiendaAdapter
     private lateinit var productoAdapter: ProductoTiendaAdapter
@@ -122,6 +129,8 @@ class TiendaActivity : BaseActivity() {
         rvCarrito       = findViewById(R.id.rvCarrito)
         cardBuscar      = findViewById(R.id.cardBuscar)
         etBuscar        = findViewById(R.id.etBuscarTienda)
+        etCodigoLector  = findViewById(R.id.etCodigoLector)
+        btnLimpiarLector = findViewById(R.id.btnLimpiarLector)
         btnToggleBuscar = findViewById(R.id.btnToggleBuscar)
         btnRealizar     = findViewById(R.id.btnRealizarVenta)
         tvSinProductos  = findViewById(R.id.tvSinProductos)
@@ -135,6 +144,7 @@ class TiendaActivity : BaseActivity() {
         configurarProductos()
         configurarCarrito()
         configurarBuscador()
+        configurarLectorCodigos()
         configurarMenuLateral()
 
         btnRealizar.setOnClickListener {
@@ -176,6 +186,10 @@ class TiendaActivity : BaseActivity() {
         actualizarIndicadorStock()
         mostrarLogoTienda()
         mostrarNombreTienda()
+        // Si el buscador no está en uso, el foco se queda en el campo del lector.
+        if (cardBuscar.visibility != View.VISIBLE) {
+            lector?.prepararParaEscanear()
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -385,6 +399,60 @@ class TiendaActivity : BaseActivity() {
         actualizarCarritoUI()
     }
 
+    /**
+     * Prepara el campo que recibe los escaneos del lector Bluetooth (HID).
+     *
+     * El lector se comporta como teclado: escribe el código en el campo con
+     * foco y manda Enter al final. [LectorCodigoBarras] avisa cuando el código
+     * está completo, tanto si viene del lector como si el usuario lo escribió
+     * a mano y pulsó Enter / "Listo".
+     */
+    private fun configurarLectorCodigos() {
+        lector = LectorCodigoBarras.configurar(etCodigoLector) { codigo ->
+            procesarCodigoLeido(codigo)
+        }
+
+        // El botón de limpiar solo aparece cuando se escribe a mano.
+        etCodigoLector.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                btnLimpiarLector.visibility =
+                    if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        btnLimpiarLector.setOnClickListener {
+            lector?.prepararParaEscanear()
+        }
+
+        etCodigoLector.requestFocus()
+    }
+
+    /**
+     * Busca el producto del código escaneado y lo agrega al carrito. Deja el
+     * campo vacío y con el foco para poder escanear el siguiente sin tocar nada.
+     */
+    private fun procesarCodigoLeido(codigo: String) {
+        val producto = db.productoDao().buscarPorCodigoBarras(codigo)
+        if (producto == null) {
+            Toast.makeText(
+                this,
+                "Ningún producto tiene el código $codigo",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else if (producto.vendePorPeso) {
+            // Frutas y verduras: pregunta si va por pieza o por kilo.
+            mostrarOpcionesVenta(producto)
+        } else if (agregarAlCarrito(producto)) {
+            SonidoUI.click(this)
+            Toast.makeText(this, "Agregado: ${producto.nombre}", Toast.LENGTH_SHORT).show()
+        }
+        // agregarAlCarrito ya avisa cuando no hay stock suficiente.
+
+        lector?.prepararParaEscanear()
+    }
+
     private fun configurarBuscador() {
         btnToggleBuscar.setOnClickListener {
             if (cardBuscar.visibility == View.VISIBLE) {
@@ -392,6 +460,8 @@ class TiendaActivity : BaseActivity() {
                 etBuscar.setText("")
                 busquedaActual = ""
                 filtrarProductos()
+                // Al cerrar la búsqueda el foco vuelve al lector.
+                lector?.prepararParaEscanear()
             } else {
                 cardBuscar.visibility = View.VISIBLE
                 etBuscar.requestFocus()

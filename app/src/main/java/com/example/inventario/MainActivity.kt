@@ -26,6 +26,7 @@ class MainActivity : BaseActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ProductoAdapter
     private lateinit var spinnerCategoria: Spinner
+    private lateinit var searchView: SearchView
     private lateinit var db: AppDatabase
 
     private var categoriaSeleccionada: String = ""
@@ -96,17 +97,39 @@ class MainActivity : BaseActivity() {
             startActivity(Intent(this, TiendaActivity::class.java))
         }
 
-        val searchView = findViewById<SearchView>(R.id.searchView)
+        searchView = findViewById(R.id.searchView)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            // El lector Bluetooth (HID) escribe el código aquí y manda Enter, lo
+            // que dispara este submit; escribirlo a mano y pulsar buscar hace lo
+            // mismo. Si el texto es un código de barras se abre el producto.
             override fun onQueryTextSubmit(query: String?) = true.also {
-                busquedaActual = query ?: ""
+                val texto = query?.trim().orEmpty()
+                busquedaActual = texto
                 filtrarProductos()
+                if (texto.isNotEmpty()) abrirProductoPorCodigo(texto)
             }
             override fun onQueryTextChange(newText: String?) = true.also {
-                busquedaActual = newText ?: ""
+                busquedaActual = newText?.trim() ?: ""
                 filtrarProductos()
             }
         })
+    }
+
+    /**
+     * Abre el detalle del producto que tenga ese código de barras. Si ninguno lo
+     * tiene no hace nada: el texto se queda en el buscador como búsqueda normal
+     * por nombre o categoría.
+     */
+    private fun abrirProductoPorCodigo(codigo: String) {
+        val producto = db.productoDao().buscarPorCodigoBarras(codigo) ?: return
+
+        // Se limpia el buscador para dejarlo listo para el siguiente escaneo.
+        searchView.setQuery("", false)
+        searchView.clearFocus()
+
+        val intent = Intent(this, DetalleProductoActivity::class.java)
+        intent.putExtra("PRODUCTO_ID", producto.id)
+        startActivity(intent)
     }
 
     override fun onResume() {

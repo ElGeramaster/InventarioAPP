@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -37,6 +38,7 @@ class AgregarProductoActivity : BaseActivity() {
     private lateinit var etCantidad: TextInputEditText
     private lateinit var etStockMinimo: TextInputEditText
     private lateinit var etCodigoBarras: TextInputEditText
+    private lateinit var tilCodigoBarras: TextInputLayout
     private lateinit var etFechaCaducidad: TextInputEditText
     private lateinit var switchPorPeso: com.google.android.material.switchmaterial.SwitchMaterial
     private lateinit var layoutPeso: View
@@ -113,6 +115,7 @@ class AgregarProductoActivity : BaseActivity() {
         etCantidad     = findViewById(R.id.etCantidad)
         etStockMinimo  = findViewById(R.id.etStockMinimo)
         etCodigoBarras = findViewById(R.id.etCodigoBarras)
+        tilCodigoBarras = findViewById(R.id.tilCodigoBarras)
         etFechaCaducidad = findViewById(R.id.etFechaCaducidad)
         switchPorPeso  = findViewById(R.id.switchPorPeso)
         layoutPeso     = findViewById(R.id.layoutPeso)
@@ -154,6 +157,10 @@ class AgregarProductoActivity : BaseActivity() {
             title = "Agregar producto"
         }
 
+        // Se configura después de llenarCampos() para que el código ya guardado
+        // no se interprete como un escaneo recién hecho.
+        configurarLectorCodigos()
+
         findViewById<Button>(R.id.btnEscanearCodigo).setOnClickListener {
             val options = ScanOptions()
             options.setDesiredBarcodeFormats(ScanOptions.ALL_CODE_TYPES)
@@ -188,6 +195,50 @@ class AgregarProductoActivity : BaseActivity() {
         findViewById<Button>(R.id.btnCancelar).setOnClickListener {
             finish()
         }
+    }
+
+    /**
+     * Permite llenar el campo "Código" con el lector Bluetooth (HID): el lector
+     * teclea el código y manda Enter, y aquí se limpia el texto (saltos de línea
+     * y espacios) y se avisa si ese código ya lo usa otro producto.
+     *
+     * Escribir el código a mano funciona igual; la comprobación se hace al
+     * pulsar Enter / "Listo" o al guardar.
+     */
+    private fun configurarLectorCodigos() {
+        // limpiarAlProcesar = false: aquí el código es un dato del formulario,
+        // así que se queda escrito en el campo.
+        LectorCodigoBarras.configurar(
+            campo = etCodigoBarras,
+            limpiarAlProcesar = false
+        ) { codigo ->
+            ocultarTeclado()
+            avisarSiCodigoDuplicado(codigo)
+        }
+
+        etCodigoBarras.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                tilCodigoBarras.error = null
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
+    }
+
+    /** Marca el campo si otro producto ya tiene registrado ese código de barras. */
+    private fun avisarSiCodigoDuplicado(codigo: String) {
+        val existente = db.productoDao().buscarPorCodigoBarras(codigo)
+        if (existente != null && existente.id != productoExistente?.id) {
+            tilCodigoBarras.error = "Ese código ya es de \"${existente.nombre}\""
+        } else {
+            tilCodigoBarras.error = null
+            Toast.makeText(this, "Código leído: $codigo", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun ocultarTeclado() {
+        ContextCompat.getSystemService(this, InputMethodManager::class.java)
+            ?.hideSoftInputFromWindow(etCodigoBarras.windowToken, 0)
     }
 
     private fun cargarCategorias() {

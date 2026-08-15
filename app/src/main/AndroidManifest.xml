@@ -40,9 +40,13 @@
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <!-- El campo del lector arranca con el foco (para recibir los escaneos),
+             pero sin abrir el teclado en pantalla; este se muestra solo si el
+             usuario toca el campo para escribir el código a mano. -->
         <activity
             android:name=".TiendaGUI.TiendaActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

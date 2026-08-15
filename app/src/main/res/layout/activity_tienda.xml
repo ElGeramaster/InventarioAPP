@@ -78,6 +78,57 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Campo del lector de código de barras (Bluetooth HID) -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardLector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            app:layout_constraintTop_toBottomOf="@id/cardHeader">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp">
+
+                <ImageView
+                    android:id="@+id/ivIconoLector"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="Lector de código de barras"
+                    android:src="@drawable/ic_barcode"
+                    app:tint="#2E7D32" />
+
+                <EditText
+                    android:id="@+id/etCodigoLector"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="Escanea o escribe el código..."
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:singleLine="true" />
+
+                <ImageButton
+                    android:id="@+id/btnLimpiarLector"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Limpiar código"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    android:visibility="gone"
+                    app:tint="#757575"
+                    tools:visibility="visible" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
         <!-- Buscador Expandible -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardBuscar"
@@ -87,7 +138,7 @@
             android:visibility="gone"
             app:cardCornerRadius="8dp"
             app:cardElevation="2dp"
-            app:layout_constraintTop_toBottomOf="@id/cardHeader"
+            app:layout_constraintTop_toBottomOf="@id/cardLector"
             tools:visibility="visible">
 
             <EditText
