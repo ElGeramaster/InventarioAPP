@@ -1,0 +1,48 @@
+package com.example.inventario
+
+import androidx.room.*
+
+@Dao
+interface ProductoDao {
+
+    @Insert
+    fun insertar(producto: Producto)
+
+    @Update
+    fun actualizar(producto: Producto)
+
+    @Delete
+    fun eliminar(producto: Producto)
+
+    @Query("SELECT * FROM productos ORDER BY nombre ASC")
+    fun obtenerTodos(): List<Producto>
+
+    @Query("SELECT * FROM productos WHERE nombre LIKE '%' || :busqueda || '%' OR categoria LIKE '%' || :busqueda || '%'")
+    fun buscar(busqueda: String): List<Producto>
+
+    // Excluye productos que solo se venden por peso (no llevan control de stock por pieza).
+    @Query("SELECT * FROM productos WHERE cantidad <= stockMinimo AND NOT (vendePorPeso = 1 AND precio <= 0)")
+    fun obtenerStockBajo(): List<Producto>
+
+    @Query("SELECT * FROM productos WHERE id = :id")
+    fun obtenerPorId(id: Int): Producto
+
+    @Query("SELECT DISTINCT categoria FROM productos ORDER BY categoria ASC")
+    fun obtenerCategorias(): List<String>
+
+    @Query("SELECT * FROM productos WHERE categoria = :categoria AND (nombre LIKE '%' || :busqueda || '%') ORDER BY nombre ASC")
+    fun buscarPorCategoria(categoria: String, busqueda: String): List<Producto>
+
+    @Query("SELECT * FROM productos WHERE codigoBarras = :codigo LIMIT 1")
+    fun buscarPorCodigoBarras(codigo: String): Producto?
+
+    @Query("SELECT * FROM productos WHERE favorito = 1 ORDER BY nombre ASC")
+    fun obtenerFavoritos(): List<Producto>
+
+    @Query("SELECT * FROM productos WHERE favorito = 1 AND (nombre LIKE '%' || :busqueda || '%') ORDER BY nombre ASC")
+    fun buscarFavoritos(busqueda: String): List<Producto>
+
+    // Productos con fecha de caducidad asignada que ya vencieron o vencen antes de :limite.
+    @Query("SELECT * FROM productos WHERE fechaCaducidad IS NOT NULL AND fechaCaducidad <= :limite ORDER BY fechaCaducidad ASC")
+    fun obtenerPorCaducar(limite: Long): List<Producto>
+}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="8dp">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilNombreFiado"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre del cliente"
+        android:textColorHint="#757575"
+        app:hintTextColor="#424242"
+        app:boxStrokeColor="#E53935">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etNombreFiado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#212121"
+            android:inputType="textCapWords"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilMontoFiado"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="¿Cuánto debe? ($)"
+        android:textColorHint="#757575"
+        app:hintTextColor="#424242"
+        app:boxStrokeColor="#E53935">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etMontoFiado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#212121"
+            android:inputType="numberDecimal"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilTelefonoFiado"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Teléfono (opcional)"
+        android:textColorHint="#757575"
+        app:hintTextColor="#424242"
+        app:boxStrokeColor="#E53935">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etTelefonoFiado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#212121"
+            android:inputType="phone"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilDescripcionFiado"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="¿Qué se llevó? (opcional)"
+        android:textColorHint="#757575"
+        app:hintTextColor="#424242"
+        app:boxStrokeColor="#E53935">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDescripcionFiado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#212121"
+            android:inputType="textCapSentences"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>
