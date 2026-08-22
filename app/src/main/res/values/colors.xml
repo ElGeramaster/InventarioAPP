@@ -10,4 +10,5 @@
     <color name="verde_primario">#43A047</color>
     <color name="gris_texto">#757575</color>
     <color name="gris_boton">#9E9E9E</color>
+    <color name="texto_oscuro">#212121</color>
 </resources>

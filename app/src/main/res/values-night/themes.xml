@@ -13,9 +13,9 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Force light surfaces with dark text for night mode -->
         <item name="android:windowBackground">@color/white</item>
-        <item name="android:textColorPrimary">#212121</item>
-        <item name="android:textColorSecondary">#757575</item>
-        <item name="android:editTextColor">#212121</item>
-        <item name="colorOnSurface">#212121</item>
+        <item name="android:textColorPrimary">@color/texto_oscuro</item>
+        <item name="android:textColorSecondary">@color/gris_texto</item>
+        <item name="android:editTextColor">@color/texto_oscuro</item>
+        <item name="colorOnSurface">@color/texto_oscuro</item>
     </style>
 </resources>
