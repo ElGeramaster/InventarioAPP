@@ -1,6 +1,5 @@
 package com.example.inventario
 
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -45,7 +44,7 @@ class ProductoCaducidadAdapter(
         holder.tvFecha.text = formatoFecha.format(Date(fechaCaducidad))
 
         if (!producto.imagenUri.isNullOrEmpty()) {
-            val bitmap = BitmapFactory.decodeFile(producto.imagenUri)
+            val bitmap = ImagenUtils.miniatura(producto.imagenUri)
             if (bitmap != null) {
                 holder.ivThumbnail.setImageBitmap(bitmap)
                 holder.cardThumbnail.visibility = View.VISIBLE

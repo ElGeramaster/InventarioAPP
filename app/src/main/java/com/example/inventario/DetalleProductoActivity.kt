@@ -1,7 +1,6 @@
 package com.example.inventario
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -104,7 +103,7 @@ class DetalleProductoActivity : BaseActivity() {
 
         // Mostrar imagen si existe
         if (!p.imagenUri.isNullOrEmpty()) {
-            val bitmap = BitmapFactory.decodeFile(p.imagenUri)
+            val bitmap = ImagenUtils.grande(p.imagenUri)
             if (bitmap != null) {
                 ivDetalleProducto.setImageBitmap(bitmap)
                 cardImagen.visibility = View.VISIBLE

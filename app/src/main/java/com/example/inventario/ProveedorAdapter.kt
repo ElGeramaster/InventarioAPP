@@ -1,13 +1,11 @@
 package com.example.inventario
 
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import java.io.File
 
 class ProveedorAdapter(
     private var proveedores: List<Proveedor>,
@@ -45,9 +43,7 @@ class ProveedorAdapter(
             holder.tvTelefono.visibility = View.GONE
         }
 
-        val bitmap = p.imagenUri?.let { ruta ->
-            if (File(ruta).exists()) BitmapFactory.decodeFile(ruta) else null
-        }
+        val bitmap = ImagenUtils.miniatura(p.imagenUri)
         if (bitmap != null) {
             holder.ivProveedor.setImageBitmap(bitmap)
         } else {

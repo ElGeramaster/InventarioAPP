@@ -2,7 +2,6 @@ package com.example.inventario
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -172,7 +171,7 @@ class AgregarProveedorActivity : BaseActivity() {
     }
 
     private fun mostrarImagen(path: String) {
-        val bitmap = BitmapFactory.decodeFile(path)
+        val bitmap = ImagenUtils.grande(path)
         if (bitmap != null) {
             ivProveedor.setImageBitmap(bitmap)
             ivProveedor.visibility = View.VISIBLE
