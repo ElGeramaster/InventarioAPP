@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mi Mercancía</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- ===== Menú lateral ===== -->
+    <nav class="sidebar">
+      <div class="sidebar-tienda">
+        <div class="sidebar-logo">🏪</div>
+        <div class="sidebar-nombre" id="nombreTienda">Mi Tienda</div>
+      </div>
+      <button class="nav-item active" data-vista="pos">🛒 Punto de venta</button>
+      <button class="nav-item" data-vista="inventario">📦 Mi mercancía</button>
+      <button class="nav-item" data-vista="historial">🧾 Historial de ventas</button>
+      <button class="nav-item" data-vista="reportes">📊 Reportes <span class="dot-alerta" id="dotStock" hidden></span></button>
+      <button class="nav-item" data-vista="fiados">📒 Fiados</button>
+      <button class="nav-item" data-vista="proveedores">🚚 Proveedores</button>
+      <div class="sidebar-fin">
+        <button class="nav-item" id="btnAjustes">⚙️ Ajustes</button>
+      </div>
+    </nav>
+
+    <main class="contenido">
+      <!-- ===== Punto de venta ===== -->
+      <section class="vista" id="vista-pos">
+        <div class="pos-izquierda">
+          <div class="pos-toolbar">
+            <input type="text" id="inputLector" class="input-lector"
+                   placeholder="🔍 Escanea un código de barras aquí..." autocomplete="off" />
+            <input type="text" id="inputBuscarPos" class="input-buscar"
+                   placeholder="Buscar producto..." autocomplete="off" />
+          </div>
+          <div class="chips" id="chipsCategorias"></div>
+          <div class="grid-productos" id="gridProductos"></div>
+          <p class="vacio" id="posSinProductos" hidden>No hay productos. Agrega mercancía en "Mi mercancía".</p>
+        </div>
+        <aside class="pos-carrito">
+          <h2>Venta actual</h2>
+          <div class="carrito-items" id="carritoItems"></div>
+          <p class="vacio" id="carritoVacio">El carrito está vacío.<br/>Toca un producto o escanea su código.</p>
+          <button class="btn-realizar" id="btnRealizarVenta" disabled>REALIZAR VENTA — $0.00</button>
+        </aside>
+      </section>
+
+      <!-- ===== Inventario ===== -->
+      <section class="vista" id="vista-inventario" hidden>
+        <div class="encabezado-vista">
+          <h1>Mi mercancía</h1>
+          <div class="acciones">
+            <input type="text" id="inputBuscarInv" class="input-buscar" placeholder="Buscar por nombre o categoría..." autocomplete="off" />
+            <button class="btn-primario" id="btnNuevoProducto">＋ Agregar producto</button>
+          </div>
+        </div>
+        <div class="tabla-scroll">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th></th><th>Producto</th><th>Categoría</th><th>P. compra</th>
+                <th>P. venta</th><th>Stock</th><th>Código</th><th>Caducidad</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="tbodyInventario"></tbody>
+          </table>
+        </div>
+        <p class="vacio" id="invVacio" hidden>Aún no tienes productos registrados.</p>
+      </section>
+
+      <!-- ===== Historial de ventas ===== -->
+      <section class="vista" id="vista-historial" hidden>
+        <div class="encabezado-vista">
+          <h1>Historial de ventas</h1>
+          <div class="acciones">
+            <button class="btn-filtro active" id="btnSemana">Última semana</button>
+            <button class="btn-filtro" id="btnMes">Último mes</button>
+            <button class="btn-secundario" id="btnLimpiarHistorial">Limpiar todo</button>
+          </div>
+        </div>
+        <div class="fila-tarjetas">
+          <div class="tarjeta stat"><span class="stat-num" id="statConteo">0</span><span class="stat-label">Ventas</span></div>
+          <div class="tarjeta stat"><span class="stat-num verde" id="statIngresos">$0</span><span class="stat-label">Ingresos</span></div>
+          <div class="tarjeta stat"><span class="stat-num naranja" id="statGanancia">$0</span><span class="stat-label">Ganancia</span></div>
+        </div>
+        <div class="tarjeta">
+          <h3 id="tituloGrafica">Ingresos por día (última semana)</h3>
+          <div class="grafica" id="grafica"></div>
+          <p class="vacio" id="graficaVacia" hidden>Sin ventas en este periodo.</p>
+        </div>
+        <div class="fila-tarjetas">
+          <div class="tarjeta mitad">
+            <h3>⭐ Más vendidos</h3>
+            <ol class="lista-top" id="listaMasVendidos"></ol>
+          </div>
+          <div class="tarjeta mitad">
+            <h3>🐢 Menos vendidos</h3>
+            <ol class="lista-top" id="listaMenosVendidos"></ol>
+          </div>
+        </div>
+        <div class="tarjeta">
+          <h3>Ventas del periodo</h3>
+          <div id="listaVentas"></div>
+          <p class="vacio" id="ventasVacio" hidden>No hay ventas en este periodo.</p>
+        </div>
+      </section>
+
+      <!-- ===== Reportes ===== -->
+      <section class="vista" id="vista-reportes" hidden>
+        <div class="encabezado-vista"><h1>Reportes</h1></div>
+        <div class="fila-tarjetas">
+          <div class="tarjeta stat"><span class="stat-num" id="repTotalProductos">0</span><span class="stat-label">Productos</span></div>
+          <div class="tarjeta stat"><span class="stat-num verde" id="repValorVenta">$0</span><span class="stat-label">Valor de venta</span></div>
+          <div class="tarjeta stat"><span class="stat-num" id="repValorCompra">$0</span><span class="stat-label">Inversión</span></div>
+          <div class="tarjeta stat"><span class="stat-num naranja" id="repGanancia">$0</span><span class="stat-label">Ganancia posible</span></div>
+        </div>
+        <div class="acciones" style="margin-bottom: 14px">
+          <button class="btn-filtro rojo active" id="btnStockBajo">0 · BAJO STOCK</button>
+          <button class="btn-filtro naranja" id="btnPorCaducar">0 · POR CADUCAR</button>
+        </div>
+        <div class="tarjeta">
+          <div id="listaReporte"></div>
+          <p class="vacio" id="reporteVacio" hidden>Todo en orden 🎉</p>
+        </div>
+      </section>
+
+      <!-- ===== Fiados ===== -->
+      <section class="vista" id="vista-fiados" hidden>
+        <div class="encabezado-vista">
+          <h1>Fiados</h1>
+          <div class="acciones">
+            <div class="total-deuda">Por cobrar: <b id="totalDeuda">$0.00</b></div>
+            <button class="btn-primario" id="btnNuevoFiado">＋ Agregar fiado</button>
+          </div>
+        </div>
+        <div id="listaFiados" class="lista-tarjetas"></div>
+        <p class="vacio" id="fiadosVacio" hidden>Nadie te debe por ahora 🎉</p>
+      </section>
+
+      <!-- ===== Proveedores ===== -->
+      <section class="vista" id="vista-proveedores" hidden>
+        <div class="encabezado-vista">
+          <h1>Proveedores</h1>
+          <div class="acciones">
+            <button class="btn-primario" id="btnNuevoProveedor">＋ Agregar proveedor</button>
+          </div>
+        </div>
+        <div id="listaProveedores" class="lista-tarjetas"></div>
+        <p class="vacio" id="proveedoresVacio" hidden>Aún no registras proveedores.</p>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===== Modales ===== -->
+  <div class="modal-fondo" id="modalFondo" hidden>
+    <div class="modal" id="modalCaja"></div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

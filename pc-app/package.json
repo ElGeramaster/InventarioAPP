@@ -1,0 +1,16 @@
+{
+  "name": "mi-mercancia",
+  "version": "1.0.0",
+  "description": "Punto de venta de escritorio de Mi Mercancia (version PC de InventarioAPP)",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.2.0",
+    "electron": "^32.0.0"
+  }
+}
