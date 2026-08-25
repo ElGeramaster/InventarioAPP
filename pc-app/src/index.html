@@ -10,7 +10,21 @@
     <!-- ===== Menú lateral ===== -->
     <nav class="sidebar">
       <div class="sidebar-tienda">
-        <div class="sidebar-logo">🏪</div>
+        <div class="sidebar-logo">
+          <!-- Logotipo: tienda con toldo en círculo amarillo -->
+          <svg viewBox="0 0 480 440" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="240" cy="220" rx="228" ry="215" fill="#fafa9e" stroke="#000" stroke-width="4"/>
+            <path d="M130 90 H350 L372 170
+                     a27 27 0 0 1 -54 0 a27 27 0 0 1 -54 0 a27 27 0 0 1 -54 0
+                     a27 27 0 0 1 -54 0 a27 27 0 0 1 -54 0 Z"
+                  fill="#fafa9e" stroke="#000" stroke-width="14" stroke-linejoin="round"/>
+            <path d="M174 90 L156 168 M218 90 L210 168 M262 90 L264 168 M306 90 L318 168"
+                  stroke="#000" stroke-width="12" fill="none"/>
+            <rect x="128" y="197" width="224" height="133" fill="none" stroke="#000" stroke-width="14"/>
+            <rect x="158" y="232" width="62" height="56" fill="none" stroke="#000" stroke-width="12"/>
+            <rect x="258" y="232" width="68" height="91" fill="none" stroke="#000" stroke-width="12"/>
+          </svg>
+        </div>
         <div class="sidebar-nombre" id="nombreTienda">Mi Tienda</div>
       </div>
       <button class="nav-item active" data-vista="pos">🛒 Punto de venta</button>
@@ -42,7 +56,7 @@
           <h2>Venta actual</h2>
           <div class="carrito-items" id="carritoItems"></div>
           <p class="vacio" id="carritoVacio">El carrito está vacío.<br/>Toca un producto o escanea su código.</p>
-          <button class="btn-realizar" id="btnRealizarVenta" disabled>REALIZAR VENTA — $0.00</button>
+          <button class="btn-realizar" id="btnRealizarVenta" disabled>REALIZAR VENTA — $0.00 MXN</button>
         </aside>
       </section>
 
@@ -110,10 +124,10 @@
       <section class="vista" id="vista-reportes" hidden>
         <div class="encabezado-vista"><h1>Reportes</h1></div>
         <div class="fila-tarjetas">
-          <div class="tarjeta stat"><span class="stat-num" id="repTotalProductos">0</span><span class="stat-label">Productos</span></div>
-          <div class="tarjeta stat"><span class="stat-num verde" id="repValorVenta">$0</span><span class="stat-label">Valor de venta</span></div>
-          <div class="tarjeta stat"><span class="stat-num" id="repValorCompra">$0</span><span class="stat-label">Inversión</span></div>
-          <div class="tarjeta stat"><span class="stat-num naranja" id="repGanancia">$0</span><span class="stat-label">Ganancia posible</span></div>
+          <div class="tarjeta stat pastel-verde"><span class="stat-num" id="repTotalProductos">0</span><span class="stat-label">Productos</span></div>
+          <div class="tarjeta stat pastel-azul"><span class="stat-num" id="repValorVenta">$0</span><span class="stat-label">Valor venta</span></div>
+          <div class="tarjeta stat pastel-naranja"><span class="stat-num" id="repValorCompra">$0</span><span class="stat-label">Inversión compra</span></div>
+          <div class="tarjeta stat pastel-morado"><span class="stat-num" id="repGanancia">$0</span><span class="stat-label">Ganancia potencial</span></div>
         </div>
         <div class="acciones" style="margin-bottom: 14px">
           <button class="btn-filtro rojo active" id="btnStockBajo">0 · BAJO STOCK</button>

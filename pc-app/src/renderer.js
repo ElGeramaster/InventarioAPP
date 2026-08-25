@@ -120,19 +120,6 @@ function formatearKg(gramos) {
   return `${parseFloat((gramos / 1000).toFixed(3))} kg`;
 }
 
-const EMOJIS_CATEGORIA = [
-  [/fruta|verdura/i, '🍎'], [/refresco|bebida|agua|jugo/i, '🥤'], [/dulce|chocolate|galleta/i, '🍬'],
-  [/pan|tortilla/i, '🥖'], [/lacteo|leche|queso/i, '🥛'], [/carne|pollo|embutido/i, '🍗'],
-  [/limpieza|jabon|deterg/i, '🧼'], [/abarrote/i, '🥫'], [/botana|papas|frituras/i, '🍿'],
-  [/cerveza|licor|vino/i, '🍺'], [/higiene|papel/i, '🧻'], [/cigarro|tabaco/i, '🚬'],
-];
-function emojiDe(producto) {
-  for (const [regex, emoji] of EMOJIS_CATEGORIA) {
-    if (regex.test(producto.categoria)) return emoji;
-  }
-  return '📦';
-}
-
 async function refrescarPos() {
   await cargarChipsCategorias();
   await filtrarProductosPos();
@@ -146,8 +133,8 @@ async function cargarChipsCategorias() {
   if (!categorias.includes(categoriaSeleccionada)) categoriaSeleccionada = CAT_TODOS;
   $('chipsCategorias').innerHTML = categorias
     .map(
-      (c) =>
-        `<button class="chip ${c === categoriaSeleccionada ? 'active' : ''}" data-cat="${escapar(c)}">${escapar(c)}</button>`
+      (c, i) =>
+        `<button class="chip c${i % 6} ${c === categoriaSeleccionada ? 'active' : ''}" data-cat="${escapar(c)}">${escapar(c)}</button>`
     )
     .join('');
   document.querySelectorAll('.chip').forEach((chip) => {
@@ -176,7 +163,9 @@ async function filtrarProductosPos() {
     .map((p) => {
       const soloPeso = p.vendePorPeso && p.precio <= 0;
       const agotado = !soloPeso && !p.vendePorPeso && p.cantidad <= 0;
-      const precioTxt = p.vendePorPeso && p.precioKilo > 0 ? `${fmt(p.precioKilo)}/kg` : fmt(p.precio);
+      const precioTxt = p.vendePorPeso && p.precioKilo > 0
+        ? `${fmt(p.precioKilo)} MXN/kg`
+        : `${fmt(p.precio)} MXN`;
       const stockTxt = soloPeso
         ? 'Por peso'
         : agotado
@@ -184,10 +173,10 @@ async function filtrarProductosPos() {
           : `Stock: ${p.cantidad}`;
       return `
         <div class="card-producto ${agotado ? 'agotado' : ''}" data-id="${p.id}">
-          <div class="emoji">${emojiDe(p)}</div>
-          <div class="nombre">${p.favorito ? '⭐ ' : ''}${escapar(p.nombre)}</div>
+          <div class="nombre">${p.favorito ? '<span class="fav">❤</span> ' : ''}${escapar(p.nombre)}</div>
           <div class="precio">${precioTxt}</div>
           <div class="stock ${agotado ? 'agotado' : ''}">${stockTxt}</div>
+          <button class="btn-agregar">Agregar</button>
         </div>`;
     })
     .join('');
@@ -266,7 +255,7 @@ function actualizarCarritoUI() {
 
   $('carritoVacio').hidden = items.length > 0;
   $('btnRealizarVenta').disabled = items.length === 0;
-  $('btnRealizarVenta').textContent = `REALIZAR VENTA — ${fmt(total)}`;
+  $('btnRealizarVenta').textContent = `REALIZAR VENTA — ${fmt(total)} MXN`;
 
   $('carritoItems').innerHTML = items
     .map((it, i) => {
@@ -503,7 +492,7 @@ async function cargarInventario() {
       const caducidad = p.fechaCaducidad ? new Date(p.fechaCaducidad).toLocaleDateString('es-MX') : '—';
       return `
         <tr>
-          <td><button class="btn-fav ${p.favorito ? 'activo' : ''}" data-fav="${p.id}">⭐</button></td>
+          <td><button class="btn-fav" data-fav="${p.id}" title="Favorito">${p.favorito ? '❤️' : '🤍'}</button></td>
           <td><b>${escapar(p.nombre)}</b></td>
           <td>${escapar(p.categoria)}</td>
           <td class="num">${fmt(p.vendePorPeso && p.precio <= 0 ? p.precioCompraKilo : p.precioCompra)}</td>
