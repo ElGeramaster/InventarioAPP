@@ -18,6 +18,43 @@ function escapar(texto) {
   return div.innerHTML;
 }
 
+// ----- Sonido de clic (igual que SonidoUI en la app móvil) -----
+
+let audioCtx = null;
+let sonidoActivo = true;
+
+/** Clic corto y suave, generado sin archivos de audio. */
+function sonarClick() {
+  if (!sonidoActivo) return;
+  try {
+    audioCtx = audioCtx || new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const ahora = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const vol = audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, ahora);
+    osc.frequency.exponentialRampToValueAtTime(440, ahora + 0.05);
+
+    vol.gain.setValueAtTime(0.0001, ahora);
+    vol.gain.exponentialRampToValueAtTime(0.22, ahora + 0.008);
+    vol.gain.exponentialRampToValueAtTime(0.0001, ahora + 0.07);
+
+    osc.connect(vol).connect(audioCtx.destination);
+    osc.start(ahora);
+    osc.stop(ahora + 0.08);
+  } catch {
+    // Si el navegador bloquea el audio, la app sigue funcionando igual.
+  }
+}
+
+// Cualquier botón o tarjeta de producto suena al presionarse.
+document.addEventListener('click', (e) => {
+  if (e.target.closest('button, .card-producto, .chip, .fila-venta')) sonarClick();
+});
+
 let toastTimer = null;
 function toast(mensaje) {
   const el = $('toast');
@@ -182,10 +219,21 @@ async function filtrarProductosPos() {
     .join('');
 
   document.querySelectorAll('.card-producto').forEach((card) => {
-    card.onclick = () => {
-      const producto = productosPos.find((p) => p.id === Number(card.dataset.id));
-      if (producto) elegirModoVenta(producto);
+    const producto = productosPos.find((p) => p.id === Number(card.dataset.id));
+    if (!producto) return;
+
+    // Botón "Agregar": suma 1 pieza directo, sin preguntar.
+    card.querySelector('.btn-agregar').onclick = (e) => {
+      e.stopPropagation();
+      if (producto.vendePorPeso && producto.precio <= 0) {
+        modalPeso(producto);
+      } else if (agregarAlCarrito(producto)) {
+        toast(`Agregado: ${producto.nombre}`);
+      }
     };
+
+    // Clic en el recuadro: abre el selector de cuántas unidades.
+    card.onclick = () => elegirModoVenta(producto);
   });
 }
 
@@ -264,14 +312,14 @@ function actualizarCarritoUI() {
         : `${it.cantidad} × ${fmt(it.producto.precio)}`;
       return `
         <div class="carrito-item">
-          <div class="info">
-            <div class="nombre">${escapar(it.producto.nombre)}</div>
-            <div class="detalle">${detalle}</div>
+          <div class="nombre">${escapar(it.producto.nombre)}</div>
+          <div class="linea">
+            <span class="detalle">${detalle}</span>
+            <span class="subtotal">${fmt(subtotalItem(it))}</span>
+            ${it.porPeso ? '' : `<button class="btn-mini" data-accion="menos" data-i="${i}">−</button>
+            <button class="btn-mini" data-accion="mas" data-i="${i}">＋</button>`}
+            <button class="btn-mini rojo" data-accion="quitar" data-i="${i}">✕</button>
           </div>
-          <span class="subtotal">${fmt(subtotalItem(it))}</span>
-          ${it.porPeso ? '' : `<button class="btn-mini" data-accion="menos" data-i="${i}">−</button>
-          <button class="btn-mini" data-accion="mas" data-i="${i}">＋</button>`}
-          <button class="btn-mini rojo" data-accion="quitar" data-i="${i}">✕</button>
         </div>`;
     })
     .join('');
@@ -1103,30 +1151,145 @@ async function cargarNombreTienda() {
   $('nombreTienda').textContent = nombre || 'Mi Tienda';
 }
 
+/** Muestra el logotipo que subió el usuario, o el predeterminado si no hay. */
+async function cargarLogo() {
+  const logo = await window.api.config.obtener('logo');
+  $('logoPersonalizado').hidden = !logo;
+  $('logoPredeterminado').hidden = !!logo;
+  if (logo) $('logoPersonalizado').src = logo;
+}
+
+async function cargarTamanoFuente() {
+  const guardado = parseFloat(await window.api.config.obtener('zoom'));
+  window.api.zoom(guardado > 0 ? guardado : 1);
+}
+
+async function cargarSonido() {
+  sonidoActivo = (await window.api.config.obtener('sonido')) !== 'off';
+}
+
+/**
+ * Achica el logotipo a 256px como máximo para que la base de datos no crezca
+ * de más si el usuario elige una fotografía grande.
+ */
+function redimensionarLogo(dataUri, maximo = 256) {
+  return new Promise((resolver) => {
+    const img = new Image();
+    img.onload = () => {
+      if (img.width <= maximo && img.height <= maximo) return resolver(dataUri);
+
+      const escala = maximo / Math.max(img.width, img.height);
+      const lienzo = document.createElement('canvas');
+      lienzo.width = Math.round(img.width * escala);
+      lienzo.height = Math.round(img.height * escala);
+      lienzo.getContext('2d').drawImage(img, 0, 0, lienzo.width, lienzo.height);
+      resolver(lienzo.toDataURL('image/png'));
+    };
+    img.onerror = () => resolver(dataUri);
+    img.src = dataUri;
+  });
+}
+
 $('btnAjustes').addEventListener('click', async () => {
-  const actual = (await window.api.config.obtener('nombreTienda')) || '';
+  const [nombre, logo, zoomGuardado] = await Promise.all([
+    window.api.config.obtener('nombreTienda'),
+    window.api.config.obtener('logo'),
+    window.api.config.obtener('zoom'),
+  ]);
+  const zoomActual = parseFloat(zoomGuardado) > 0 ? parseFloat(zoomGuardado) : 1;
+  // Logo elegido en este momento: null = sin cambios, '' = quitar, data URI = nuevo.
+  let logoNuevo = null;
+
   abrirModal(`
-    <h2>Ajustes</h2>
+    <h2>⚙️ Ajustes</h2>
     <div class="form">
-      <div><label>Nombre de la tienda</label>
-        <input type="text" id="aNombre" style="width:100%" value="${escapar(actual)}" placeholder="Mi Tienda" /></div>
+      <div>
+        <label>Nombre de la tienda</label>
+        <input type="text" id="aNombre" style="width:100%" value="${escapar(nombre || '')}" placeholder="Mi Tienda" />
+      </div>
+
+      <div>
+        <label>Logotipo</label>
+        <div class="ajuste-logo">
+          <img id="aLogoPreview" class="logo-preview" ${logo ? `src="${logo}"` : 'hidden'} alt="" />
+          <span id="aLogoTexto" class="logo-texto">${logo ? 'Logotipo personalizado' : 'Usando el logotipo predeterminado'}</span>
+        </div>
+        <div class="botones-peso">
+          <button class="btn-secundario" id="aElegirLogo">📁 Elegir imagen...</button>
+          <button class="btn-secundario" id="aQuitarLogo">Usar el predeterminado</button>
+        </div>
+      </div>
+
+      <div>
+        <label>Tamaño de la letra: <b id="aZoomTexto">${Math.round(zoomActual * 100)}%</b></label>
+        <input type="range" id="aZoom" min="0.7" max="1.6" step="0.05" value="${zoomActual}" style="width:100%" />
+        <div class="rango-etiquetas"><span>Pequeña</span><span>Normal</span><span>Grande</span></div>
+      </div>
+
+      <div class="check">
+        <input type="checkbox" id="aSonido" ${sonidoActivo ? 'checked' : ''} />
+        <label for="aSonido" style="margin:0">🔊 Sonido al presionar botones</label>
+      </div>
     </div>
     <div class="pie">
       <button class="btn-secundario" id="mCancelar">Cancelar</button>
       <button class="btn-primario" id="mGuardar">Guardar</button>
     </div>
   `);
-  $('mCancelar').onclick = cerrarModal;
+
+  // El tamaño de letra se aplica en vivo para verlo mientras se ajusta.
+  $('aZoom').addEventListener('input', () => {
+    const factor = parseFloat($('aZoom').value);
+    $('aZoomTexto').textContent = `${Math.round(factor * 100)}%`;
+    window.api.zoom(factor);
+  });
+
+  $('aSonido').addEventListener('change', () => {
+    sonidoActivo = $('aSonido').checked;
+    if (sonidoActivo) sonarClick();
+  });
+
+  $('aElegirLogo').onclick = async () => {
+    const imagen = await window.api.config.elegirLogo();
+    if (!imagen) return;
+    logoNuevo = await redimensionarLogo(imagen);
+    $('aLogoPreview').src = logoNuevo;
+    $('aLogoPreview').hidden = false;
+    $('aLogoTexto').textContent = 'Logotipo nuevo (sin guardar)';
+  };
+
+  $('aQuitarLogo').onclick = () => {
+    logoNuevo = '';
+    $('aLogoPreview').hidden = true;
+    $('aLogoTexto').textContent = 'Usando el logotipo predeterminado';
+  };
+
+  $('mCancelar').onclick = async () => {
+    // Deshace el tamaño de letra y el sonido si no se guardaron.
+    window.api.zoom(zoomActual);
+    await cargarSonido();
+    cerrarModal();
+  };
+
   $('mGuardar').onclick = async () => {
     await window.api.config.guardar('nombreTienda', $('aNombre').value.trim() || 'Mi Tienda');
+    await window.api.config.guardar('zoom', $('aZoom').value);
+    await window.api.config.guardar('sonido', $('aSonido').checked ? 'on' : 'off');
+    if (logoNuevo !== null) await window.api.config.guardar('logo', logoNuevo);
+
     cerrarModal();
     cargarNombreTienda();
-    toast('Nombre actualizado');
+    cargarLogo();
+    toast('Ajustes guardados');
   };
+
   $('aNombre').focus();
 });
 
 // ===================== Arranque =====================
 
+cargarTamanoFuente();
+cargarSonido();
 cargarNombreTienda();
+cargarLogo();
 refrescarPos();

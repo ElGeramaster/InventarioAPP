@@ -9,6 +9,8 @@ datos entre ambas en el futuro).
 - **Punto de venta**: categorías, favoritos, buscador, lector de código de
   barras (USB/Bluetooth, funciona como teclado), carrito, venta por pieza y por
   peso (¼, ½, 1 kg), confirmación y registro de la venta con descuento de stock.
+  El botón "Agregar" de cada tarjeta suma una pieza directo; al tocar el
+  recuadro se abre el selector de cuántas unidades.
 - **Mi mercancía**: alta/edición/eliminación de productos con todos los campos
   de la app (precio compra/venta, stock, stock mínimo, código de barras,
   favorito, venta por peso con precio por kilo, fecha de caducidad).
@@ -19,7 +21,9 @@ datos entre ambas en el futuro).
   bajo stock y por caducar (7 días, igual que la app).
 - **Fiados**: libreta de deudas con abonos, aumentar deuda y liquidar.
 - **Proveedores**: directorio con teléfono, producto que surte, dirección y notas.
-- **Ajustes**: nombre de la tienda.
+- **Ajustes**: nombre de la tienda, logotipo propio (se elige una imagen de la
+  computadora y se guarda achicada a 256px), tamaño de la letra de toda la
+  interfaz y sonido de los botones.
 
 ## Cómo correr
 

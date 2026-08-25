@@ -44,6 +44,8 @@ h3 { font-size: 15px; margin-bottom: 10px; color: var(--texto); }
 
 .sidebar-tienda { text-align: center; margin-bottom: 16px; }
 .sidebar-logo svg { width: 84px; height: 84px; }
+.sidebar-logo-img { width: 84px; height: 84px; object-fit: contain; border-radius: 12px; }
+.sidebar-logo-img[hidden], .sidebar-logo[hidden] { display: none; }
 .sidebar-nombre { font-weight: 800; font-size: 17px; margin-top: 4px; word-break: break-word; color: var(--texto); }
 
 .nav-item {
@@ -233,17 +235,21 @@ input:focus, textarea:focus { border-color: var(--primario); }
 .carrito-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
 
 .carrito-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   background: var(--primario-claro);
   border-radius: 10px;
-  padding: 8px 10px;
+  padding: 9px 11px;
 }
-.carrito-item .info { flex: 1; min-width: 0; }
-.carrito-item .nombre { font-weight: 600; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.carrito-item .detalle { font-size: 12.5px; color: #5f6b62; }
-.carrito-item .subtotal { font-weight: 700; color: var(--verde); font-size: 13.5px; }
+.carrito-item .nombre {
+  font-weight: 700;
+  font-size: 13.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 5px;
+}
+.carrito-item .linea { display: flex; align-items: center; gap: 6px; }
+.carrito-item .detalle { font-size: 12.5px; color: #5f6b62; flex: 1; min-width: 0; }
+.carrito-item .subtotal { font-weight: 700; color: var(--verde); font-size: 14px; margin-right: 2px; }
 
 .btn-mini {
   border: none;
@@ -422,6 +428,27 @@ input:focus, textarea:focus { border-color: var(--primario); }
 .modal .total-modal { text-align: center; font-size: 19px; font-weight: 800; color: var(--verde); margin-top: 6px; }
 .modal .botones-peso { display: flex; gap: 8px; margin: 10px 0; }
 .modal .botones-peso button { flex: 1; }
+.modal .ajuste-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--fondo);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.modal .logo-preview { width: 54px; height: 54px; object-fit: contain; border-radius: 8px; background: #fff; }
+.modal .logo-preview[hidden] { display: none; }
+.modal .logo-texto { font-size: 13.5px; color: var(--texto-suave); }
+
+.modal input[type="range"] { accent-color: var(--primario); margin-top: 4px; }
+.modal .rango-etiquetas {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--texto-suave);
+  margin-top: 2px;
+}
+
 .modal .desglose { border-top: 1px solid var(--borde); margin-top: 10px; padding-top: 10px; }
 .modal .desglose .fila { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
 .modal .desglose .fila span:last-child { font-weight: 600; }

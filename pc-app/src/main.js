@@ -1,5 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 function crearVentana() {
   const win = new BrowserWindow({
@@ -57,6 +58,24 @@ app.whenReady().then(() => {
   ipcMain.handle('config:obtener', (e, clave) => db.obtenerConfig(clave));
   ipcMain.handle('config:guardar', (e, clave, valor) => db.guardarConfig(clave, valor));
 
+  // Abre el explorador para elegir una imagen y la devuelve lista para mostrar.
+  ipcMain.handle('config:elegirLogo', async (e) => {
+    const { canceled, filePaths } = await dialog.showOpenDialog(
+      BrowserWindow.fromWebContents(e.sender),
+      {
+        title: 'Elige el logotipo de tu tienda',
+        properties: ['openFile'],
+        filters: [{ name: 'Imágenes', extensions: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'] }],
+      }
+    );
+    if (canceled || filePaths.length === 0) return null;
+
+    const ruta = filePaths[0];
+    const extension = path.extname(ruta).slice(1).toLowerCase();
+    const tipo = extension === 'jpg' ? 'jpeg' : extension;
+    return `data:image/${tipo};base64,${fs.readFileSync(ruta).toString('base64')}`;
+  });
+
   crearVentana();
 
   app.on('activate', () => {
@@ -67,3 +86,4 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
+

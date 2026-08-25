@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webFrame } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
   productos: {
@@ -38,5 +38,8 @@ contextBridge.exposeInMainWorld('api', {
   config: {
     obtener: (clave) => ipcRenderer.invoke('config:obtener', clave),
     guardar: (clave, valor) => ipcRenderer.invoke('config:guardar', clave, valor),
+    elegirLogo: () => ipcRenderer.invoke('config:elegirLogo'),
   },
+  // Escala toda la interfaz (1 = tamaño normal).
+  zoom: (factor) => webFrame.setZoomFactor(factor),
 });
